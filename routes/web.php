@@ -6,7 +6,9 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\PoolController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RechargeController;
 use App\Http\Controllers\RouterController;
+use App\Http\Controllers\VoucherController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +32,15 @@ Route::middleware('auth')->group(function () {
         Route::post('customers/bulk-action', [CustomerController::class, 'bulkAction'])
             ->name('customers.bulk-action');
         Route::resource('customers', CustomerController::class);
+
+        // Vouchers + recharge (admin + sales).
+        Route::get('vouchers', [VoucherController::class, 'index'])->name('vouchers.index');
+        Route::get('vouchers/generate', [VoucherController::class, 'create'])->name('vouchers.create');
+        Route::post('vouchers', [VoucherController::class, 'store'])->name('vouchers.store');
+        Route::delete('vouchers/{voucher}', [VoucherController::class, 'destroy'])->name('vouchers.destroy');
+
+        Route::get('customers/{customer}/recharge', [RechargeController::class, 'create'])->name('recharge.create');
+        Route::post('customers/{customer}/recharge', [RechargeController::class, 'store'])->name('recharge.store');
     });
 
     // Network/plan configuration (admin only).

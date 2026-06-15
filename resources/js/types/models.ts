@@ -73,6 +73,18 @@ export interface Plan {
     pool: string | null;
 }
 
+export interface Voucher {
+    id: number;
+    code: string;
+    batch: string | null;
+    type: 'Hotspot' | 'PPPOE';
+    status: string;
+    user_status: string;
+    generated_by: string | null;
+    issued_on: string | null;
+    plan?: { id: number; name: string } | null;
+}
+
 export interface Transaction {
     id: number;
     invoice: string;

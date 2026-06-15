@@ -115,7 +115,13 @@ export default function CustomersIndex({
                         <Plus className="size-4" /> Deactivate
                     </button>
                     <button
-                        onClick={() => notYet('Recharge')}
+                        onClick={() => {
+                            if (selected.length !== 1) {
+                                toast.error('Select exactly one customer to recharge.');
+                                return;
+                            }
+                            router.visit(route('recharge.create', selected[0]));
+                        }}
                         className={cn(ACTION_BTN, 'bg-[#2f6fb0] hover:bg-[#285f99]')}
                     >
                         <Plus className="size-4" /> Recharge

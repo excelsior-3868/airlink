@@ -90,7 +90,10 @@ const NAV: NavGroup[] = [
     {
         label: 'Hotspot',
         icon: Wifi,
-        items: [{ label: 'Hotspot Plans' }, { label: 'Vouchers' }],
+        match: 'vouchers.*',
+        items: [
+            { label: 'Vouchers', routeName: 'vouchers.index', match: 'vouchers.*' },
+        ],
     },
     {
         label: 'NAS',
