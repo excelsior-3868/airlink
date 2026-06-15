@@ -5,6 +5,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\MonitorController;
 use App\Http\Controllers\PoolController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RechargeController;
@@ -68,6 +69,10 @@ Route::middleware('auth')->group(function () {
         Route::resource('plans', PlanController::class)->except('show');
         Route::resource('routers', RouterController::class)->except('show');
         Route::resource('pools', PoolController::class)->except('show');
+
+        // Live NAS monitoring (admin only).
+        Route::get('monitor/sessions', [MonitorController::class, 'sessions'])->name('monitor.sessions');
+        Route::get('monitor/logs', [MonitorController::class, 'logs'])->name('monitor.logs');
     });
 });
 

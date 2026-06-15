@@ -106,7 +106,15 @@ const NAV: NavGroup[] = [
             { label: 'IP Pools', routeName: 'pools.index', match: 'pools.*' },
         ],
     },
-    { label: 'Monitor NAS', icon: Activity, items: [{ label: 'Active Sessions' }, { label: 'Logs' }] },
+    {
+        label: 'Monitor NAS',
+        icon: Activity,
+        match: 'monitor.*',
+        items: [
+            { label: 'Active Sessions', routeName: 'monitor.sessions', match: 'monitor.sessions' },
+            { label: 'Auth Logs', routeName: 'monitor.logs', match: 'monitor.logs' },
+        ],
+    },
     { label: 'Wallet', icon: Wallet, routeName: 'wallet.index', match: 'wallet.*' },
     { label: 'Reports', icon: FileBarChart, routeName: 'reports.index', match: 'reports.*' },
     { label: 'Messages', icon: Mail, routeName: 'messages.index', match: 'messages.*' },
