@@ -23,9 +23,9 @@ class CustomerController extends Controller
 
         return Inertia::render('Customers/Index', [
             'customers' => $this->customers->paginate(
-                $request->only('search', 'status', 'type'),
+                $request->only('search', 'status', 'type', 'id'),
             ),
-            'filters' => $request->only('search', 'status', 'type'),
+            'filters' => $request->only('search', 'status', 'type', 'id'),
         ]);
     }
 
@@ -71,6 +71,21 @@ class CustomerController extends Controller
         return redirect()
             ->route('customers.show', $customer)
             ->with('success', 'Customer updated.');
+    }
+
+    public function bulkAction(Request $request): RedirectResponse
+    {
+        $this->authorize('viewAny', Customer::class);
+
+        $data = $request->validate([
+            'action' => 'required|in:activate,deactivate,disable',
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'integer',
+        ]);
+
+        $count = $this->customers->bulkSetStatus($data['ids'], $data['action']);
+
+        return back()->with('success', "{$count} customer(s) set to {$data['action']}.");
     }
 
     public function destroy(Customer $customer): RedirectResponse

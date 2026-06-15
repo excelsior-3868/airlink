@@ -73,6 +73,29 @@ test('admin can delete a customer', function () {
     $this->assertDatabaseMissing('customers', ['id' => $customer->id]);
 });
 
+test('bulk action sets status on selected customers', function () {
+    $a = Customer::factory()->create(['status' => 'activate']);
+    $b = Customer::factory()->create(['status' => 'activate']);
+
+    $this->actingAs($this->admin)
+        ->post(route('customers.bulk-action'), [
+            'action' => 'deactivate',
+            'ids' => [$a->id, $b->id],
+        ])
+        ->assertRedirect();
+
+    expect($a->fresh()->status)->toBe('deactivate');
+    expect($b->fresh()->status)->toBe('deactivate');
+});
+
+test('search by id finds a customer', function () {
+    $c = Customer::factory()->create();
+
+    $this->actingAs($this->admin)
+        ->get(route('customers.index', ['id' => $c->id]))
+        ->assertInertia(fn ($page) => $page->has('customers.data', 1));
+});
+
 test('regular role cannot access customers', function () {
     $regular = User::factory()->create(['role' => UserRole::Regular, 'status' => 'active']);
 

@@ -9,7 +9,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AppLayout from '@/Layouts/AppLayout';
 import { type Customer, type Recharge, type Transaction } from '@/types/models';
 import { Head, Link, router } from '@inertiajs/react';
 import { ArrowLeft, Pencil, Trash2 } from 'lucide-react';
@@ -41,17 +41,10 @@ export default function CustomersShow({
     };
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    Customer: {customer.username}
-                </h2>
-            }
-        >
+        <AppLayout title={`Customer: ${customer.username}`}>
             <Head title={customer.username ?? 'Customer'} />
 
-            <div className="py-8">
-                <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl space-y-6">
                     <div className="flex items-center justify-between">
                         <Button asChild variant="ghost">
                             <Link href={route('customers.index')}>
@@ -201,8 +194,7 @@ export default function CustomersShow({
                             </Table>
                         </CardContent>
                     </Card>
-                </div>
             </div>
-        </AuthenticatedLayout>
+        </AppLayout>
     );
 }

@@ -23,6 +23,8 @@ Route::middleware('auth')->group(function () {
 
     // Customer management (admin + sales).
     Route::middleware('role:admin,sales')->group(function () {
+        Route::post('customers/bulk-action', [CustomerController::class, 'bulkAction'])
+            ->name('customers.bulk-action');
         Route::resource('customers', CustomerController::class);
     });
 });

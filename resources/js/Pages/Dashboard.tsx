@@ -13,7 +13,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AppLayout from '@/Layouts/AppLayout';
 import { Head } from '@inertiajs/react';
 import { Receipt, Ticket, Users, Wifi } from 'lucide-react';
 
@@ -75,17 +75,10 @@ export default function Dashboard({
     recentTransactions: Transaction[];
 }) {
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    Dashboard
-                </h2>
-            }
-        >
+        <AppLayout title="Dashboard">
             <Head title="Dashboard" />
 
-            <div className="py-8">
-                <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-7xl space-y-6">
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                         <StatCard
                             title="Customers"
@@ -166,8 +159,7 @@ export default function Dashboard({
                             </Table>
                         </CardContent>
                     </Card>
-                </div>
             </div>
-        </AuthenticatedLayout>
+        </AppLayout>
     );
 }

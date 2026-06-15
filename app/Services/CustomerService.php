@@ -26,6 +26,9 @@ class CustomerService
                         ->orWhere('phonenumber', 'like', "%{$search}%");
                 });
             })
+            ->when($filters['id'] ?? null, fn ($q, $id) => $q->where(
+                fn ($q) => $q->where('id', $id)->orWhere('legacy_id', $id)
+            ))
             ->when($filters['status'] ?? null, fn ($q, $status) => $q->where('status', $status))
             ->when($filters['type'] ?? null, fn ($q, $type) => $q->where('type', $type))
             ->latest('id')
@@ -48,6 +51,12 @@ class CustomerService
         $customer->update($data);
 
         return $customer;
+    }
+
+    /** Apply a status to many customers at once (legacy Activate/Deactivate/Disable). */
+    public function bulkSetStatus(array $ids, string $status): int
+    {
+        return Customer::whereIn('id', $ids)->update(['status' => $status]);
     }
 
     public function delete(Customer $customer): void
