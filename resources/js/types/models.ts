@@ -5,8 +5,10 @@ export interface Customer {
     address: string | null;
     phonenumber: string | null;
     profile: string | null;
+    batch: string | null;
     type: string | null;
     status: string;
+    generated_by: string | null; // POS Owner
     last_login_at: string | null;
     created_at: string;
 }

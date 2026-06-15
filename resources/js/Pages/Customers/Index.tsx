@@ -77,11 +77,12 @@ export default function CustomersIndex({
                             <Table>
                                 <TableHeader>
                                     <TableRow>
+                                        <TableHead className="w-12">S.N.</TableHead>
                                         <TableHead>Username</TableHead>
-                                        <TableHead>Full name</TableHead>
-                                        <TableHead>Phone</TableHead>
-                                        <TableHead>Type</TableHead>
-                                        <TableHead>Status</TableHead>
+                                        <TableHead>Profile</TableHead>
+                                        <TableHead>Batch</TableHead>
+                                        <TableHead>Created date</TableHead>
+                                        <TableHead>POS Owner</TableHead>
                                         <TableHead className="text-right">
                                             Actions
                                         </TableHead>
@@ -91,39 +92,36 @@ export default function CustomersIndex({
                                     {customers.data.length === 0 && (
                                         <TableRow>
                                             <TableCell
-                                                colSpan={6}
+                                                colSpan={7}
                                                 className="text-center text-muted-foreground"
                                             >
                                                 No customers found.
                                             </TableCell>
                                         </TableRow>
                                     )}
-                                    {customers.data.map((c) => (
+                                    {customers.data.map((c, i) => (
                                         <TableRow key={c.id}>
+                                            <TableCell className="text-muted-foreground">
+                                                {(customers.from ?? 0) + i}
+                                            </TableCell>
                                             <TableCell className="font-medium">
                                                 {c.username}
                                             </TableCell>
-                                            <TableCell>{c.fullname}</TableCell>
+                                            <TableCell>{c.profile}</TableCell>
                                             <TableCell>
-                                                {c.phonenumber}
-                                            </TableCell>
-                                            <TableCell>
-                                                {c.type && (
+                                                {c.batch && (
                                                     <Badge variant="outline">
-                                                        {c.type}
+                                                        {c.batch}
                                                     </Badge>
                                                 )}
                                             </TableCell>
+                                            <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
+                                                {c.created_at
+                                                    ?.replace('T', ' ')
+                                                    .slice(0, 19)}
+                                            </TableCell>
                                             <TableCell>
-                                                <Badge
-                                                    variant={
-                                                        c.status === 'activate'
-                                                            ? 'default'
-                                                            : 'secondary'
-                                                    }
-                                                >
-                                                    {c.status}
-                                                </Badge>
+                                                {c.generated_by}
                                             </TableCell>
                                             <TableCell className="flex justify-end gap-1">
                                                 <Button
