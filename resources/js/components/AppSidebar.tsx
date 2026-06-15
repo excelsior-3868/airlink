@@ -21,7 +21,9 @@ import { Link } from '@inertiajs/react';
 import {
     ChevronRight,
     CreditCard,
+    FileBarChart,
     LayoutDashboard,
+    Mail,
     Package,
     Router as RouterIcon,
     Settings,
@@ -106,6 +108,8 @@ const NAV: NavGroup[] = [
     },
     { label: 'Monitor NAS', icon: Activity, items: [{ label: 'Active Sessions' }, { label: 'Logs' }] },
     { label: 'Wallet', icon: Wallet, routeName: 'wallet.index', match: 'wallet.*' },
+    { label: 'Reports', icon: FileBarChart, routeName: 'reports.index', match: 'reports.*' },
+    { label: 'Messages', icon: Mail, routeName: 'messages.index', match: 'messages.*' },
     {
         label: 'Administration',
         icon: Settings,

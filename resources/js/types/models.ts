@@ -85,6 +85,16 @@ export interface Voucher {
     plan?: { id: number; name: string } | null;
 }
 
+export interface Message {
+    id: number;
+    from_user: string;
+    to_user: string;
+    title: string;
+    message: string;
+    is_read: boolean;
+    sent_at: string;
+}
+
 export interface Transaction {
     id: number;
     invoice: string;
