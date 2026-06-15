@@ -25,6 +25,54 @@ export interface Recharge {
     type: string;
 }
 
+export interface Bandwidth {
+    id: number;
+    name: string;
+    rate_down: number;
+    rate_down_unit: 'Kbps' | 'Mbps';
+    rate_up: number;
+    rate_up_unit: 'Kbps' | 'Mbps';
+}
+
+export interface RouterModel {
+    id: number;
+    name: string;
+    ip_address: string;
+    username: string;
+    api_port: number;
+    use_ssl: boolean;
+    description: string | null;
+}
+
+export interface Pool {
+    id: number;
+    pool_name: string;
+    range_ip: string;
+    router_name: string;
+}
+
+export interface Plan {
+    id: number;
+    name: string;
+    type: 'Hotspot' | 'PPPOE';
+    bandwidth_policy: 'Unlimited' | 'Limited' | null;
+    limit_type: 'Time_Limit' | 'Data_Limit' | 'Both_Limit' | null;
+    time_limit: number | null;
+    time_unit: 'Mins' | 'Hrs' | null;
+    data_limit: number | null;
+    data_unit: 'MB' | 'GB' | null;
+    bandwidth_id: number | null;
+    bandwidth?: { id: number; name: string } | null;
+    price: number | null;
+    data_usage_gb: number;
+    daily_quota: number;
+    shared_users: number | null;
+    validity: number;
+    validity_unit: string | null;
+    router_name: string | null;
+    pool: string | null;
+}
+
 export interface Transaction {
     id: number;
     invoice: string;
