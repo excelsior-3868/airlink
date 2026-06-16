@@ -14,17 +14,25 @@ import PlansIndex from '@/Pages/Plans/Index';
 import PlanForm from '@/Pages/Plans/Form';
 import PoolsIndex from '@/Pages/Pools/Index';
 import PoolForm from '@/Pages/Pools/Form';
-import RoutersIndex from '@/Pages/Routers/Index';
+import RouterIndex from '@/Pages/Routers/Index';
 import RouterForm from '@/Pages/Routers/Form';
+import NASLogs from '@/Pages/NAS/Logs';
+import IpBindIndex from '@/Pages/IpBind/Index';
+import IpBindForm from '@/Pages/IpBind/Form';
 import VouchersIndex from '@/Pages/Vouchers/Index';
 import VouchersGenerate from '@/Pages/Vouchers/Generate';
 import MessagesIndex from '@/Pages/Messages/Index';
 import MessagesCreate from '@/Pages/Messages/Create';
 import MessagesShow from '@/Pages/Messages/Show';
 import ReportsIndex from '@/Pages/Reports/Index';
+import BillingsDashboard from '@/Pages/Reports/Billings';
 import WalletIndex from '@/Pages/Wallet/Index';
 import MonitorSessions from '@/Pages/Monitor/Sessions';
 import MonitorLogs from '@/Pages/Monitor/Logs';
+import UsersIndex from '@/Pages/Administration/Users/Index';
+import UserForm from '@/Pages/Administration/Users/Form';
+import Settings from '@/Pages/Administration/Settings';
+import BackupRestore from '@/Pages/Administration/Backup';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
@@ -47,7 +55,8 @@ export default function App() {
 
                     {/* Sales & Admins */}
                     <Route element={<ProtectedRoute allowedRoles={['admin', 'sales']} />}>
-                        <Route path="/customers" element={<CustomersIndex />} />
+                        <Route path="/customers" element={<CustomersIndex type="hotspot" />} />
+                        <Route path="/customers/pppoe" element={<CustomersIndex type="pppoe" />} />
                         <Route path="/customers/create" element={<CustomersCreate />} />
                         <Route path="/customers/:id" element={<CustomersShow />} />
                         <Route path="/customers/:id/edit" element={<CustomersEdit />} />
@@ -55,25 +64,38 @@ export default function App() {
                         <Route path="/vouchers" element={<VouchersIndex />} />
                         <Route path="/vouchers/generate" element={<VouchersGenerate />} />
                         <Route path="/reports" element={<ReportsIndex />} />
+                        <Route path="/reports/billings" element={<BillingsDashboard />} />
                     </Route>
 
                     {/* Admins only */}
                     <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-                        <Route path="/plans" element={<PlansIndex />} />
+                        <Route path="/plans" element={<PlansIndex type="hotspot" />} />
+                        <Route path="/plans/pppoe" element={<PlansIndex type="pppoe" />} />
                         <Route path="/plans/create" element={<PlanForm />} />
                         <Route path="/plans/:id/edit" element={<PlanForm />} />
                         <Route path="/bandwidth" element={<BandwidthIndex />} />
                         <Route path="/bandwidth/create" element={<BandwidthForm />} />
                         <Route path="/bandwidth/:id/edit" element={<BandwidthForm />} />
-                        <Route path="/routers" element={<RoutersIndex />} />
+                        <Route path="/routers" element={<RouterIndex />} />
                         <Route path="/routers/create" element={<RouterForm />} />
                         <Route path="/routers/:id/edit" element={<RouterForm />} />
+                        <Route path="/nas/logs" element={<NASLogs />} />
+                        <Route path="/ip-bindings" element={<IpBindIndex />} />
+                        <Route path="/ip-bindings/create" element={<IpBindForm />} />
+                        <Route path="/ip-bindings/:id/edit" element={<IpBindForm />} />
                         <Route path="/pools" element={<PoolsIndex />} />
                         <Route path="/pools/create" element={<PoolForm />} />
                         <Route path="/pools/:id/edit" element={<PoolForm />} />
                         <Route path="/wallet" element={<WalletIndex />} />
                         <Route path="/monitor/sessions" element={<MonitorSessions />} />
                         <Route path="/monitor/logs" element={<MonitorLogs />} />
+                        
+                        {/* Administration */}
+                        <Route path="/administration/users" element={<UsersIndex />} />
+                        <Route path="/administration/users/create" element={<UserForm />} />
+                        <Route path="/administration/users/:id/edit" element={<UserForm />} />
+                        <Route path="/administration/settings" element={<Settings />} />
+                        <Route path="/administration/backup" element={<BackupRestore />} />
                     </Route>
 
                     <Route path="*" element={<Navigate to="/dashboard" replace />} />

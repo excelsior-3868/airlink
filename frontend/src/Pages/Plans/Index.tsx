@@ -8,7 +8,11 @@ import api from '@/lib/api';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
-export default function PlansIndex() {
+interface PlansIndexProps {
+    type?: 'hotspot' | 'pppoe';
+}
+
+export default function PlansIndex({ type }: PlansIndexProps) {
     const queryClient = useQueryClient();
     const [searchParams, setSearchParams] = useSearchParams();
 
@@ -22,6 +26,7 @@ export default function PlansIndex() {
                 params: {
                     page,
                     search: search || undefined,
+                    type: type || undefined,
                 },
             });
             return res.data;
@@ -51,7 +56,7 @@ export default function PlansIndex() {
     };
 
     return (
-        <AppLayout title="Service Plans">
+        <AppLayout title={type === 'pppoe' ? 'PPPoE Plans' : 'Service Plans'}>
             <CrudIndex<Plan>
                 rows={data}
                 columns={[

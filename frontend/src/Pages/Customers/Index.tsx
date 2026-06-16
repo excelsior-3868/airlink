@@ -11,13 +11,21 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/Layouts/AppLayout';
 import { cn } from '@/lib/utils';
-import { type Customer } from '@/types/models';
+import { type Customer, type Plan } from '@/types/models';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import api from '@/lib/api';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Eye, Pencil, Plus, Search } from 'lucide-react';
+import { Eye, Pencil, Plus, Search, Calendar as CalendarIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import type { FormEventHandler } from 'react';
 import { toast } from 'sonner';
@@ -46,7 +54,11 @@ interface ApiPaginator<T> {
     };
 }
 
-export default function CustomersIndex() {
+interface CustomersIndexProps {
+    type?: 'hotspot' | 'pppoe';
+}
+
+export default function CustomersIndex({ type }: CustomersIndexProps) {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
@@ -54,28 +66,47 @@ export default function CustomersIndex() {
     const page = parseInt(searchParams.get('page') || '1', 10);
     const searchQuery = searchParams.get('search') || '';
     const searchId = searchParams.get('id') || '';
+    const expiresBeforeQuery = searchParams.get('expires_before') || '';
 
     const [searchInput, setSearchInput] = useState(searchQuery || searchId || '');
+    const [expiresBefore, setExpiresBefore] = useState(expiresBeforeQuery);
     const [selected, setSelected] = useState<number[]>([]);
+    
+    // Bulk Recharge Modal State
+    const [showRechargeModal, setShowRechargeModal] = useState(false);
+    const [selectedPlanId, setSelectedPlanId] = useState<string>('');
 
-    // If searchParams search or id updates, sync the searchInput field
     useEffect(() => {
         setSearchInput(searchQuery || searchId || '');
-    }, [searchQuery, searchId]);
+        setExpiresBefore(expiresBeforeQuery);
+    }, [searchQuery, searchId, expiresBeforeQuery]);
 
+    // Fetch Customers
     const { data: customersData, isLoading, isError } = useQuery<ApiPaginator<Customer>>({
-        queryKey: ['customers', page, searchQuery, searchId],
+        queryKey: ['customers', page, searchQuery, searchId, type, expiresBeforeQuery],
         queryFn: async () => {
             const res = await api.get('/customers', {
                 params: {
                     page,
                     search: searchQuery || undefined,
                     id: searchId || undefined,
+                    type: type || undefined,
+                    expires_before: expiresBeforeQuery || undefined,
                 },
             });
             return res.data;
         },
         placeholderData: keepPreviousData,
+    });
+
+    // Fetch Plans for Bulk Recharge
+    const { data: plansData } = useQuery<{ data: Plan[] }>({
+        queryKey: ['plans', 'all'],
+        queryFn: async () => {
+            const res = await api.get('/recharge/plans');
+            return res.data;
+        },
+        enabled: showRechargeModal,
     });
 
     const bulkMutation = useMutation({
@@ -93,10 +124,32 @@ export default function CustomersIndex() {
         },
     });
 
+    const bulkRechargeMutation = useMutation({
+        mutationFn: async () => {
+            const res = await api.post('/recharge/bulk', {
+                customer_ids: selected,
+                plan_id: parseInt(selectedPlanId),
+                method: 'cash'
+            });
+            return res.data;
+        },
+        onSuccess: (res) => {
+            toast.success(res.message || 'Bulk recharge succeeded.');
+            queryClient.invalidateQueries({ queryKey: ['customers'] });
+            setSelected([]);
+            setShowRechargeModal(false);
+            setSelectedPlanId('');
+        },
+        onError: (err: any) => {
+            toast.error(err.response?.data?.message || 'Bulk recharge failed.');
+        }
+    });
+
     const submitSearch: FormEventHandler = (e) => {
         e.preventDefault();
         setSearchParams({
             search: searchInput,
+            expires_before: expiresBefore,
             page: '1',
         });
     };
@@ -136,11 +189,23 @@ export default function CustomersIndex() {
         bulkMutation.mutate({ action, ids: selected });
     };
 
+    const handleRechargeClick = () => {
+        if (selected.length === 0) {
+            toast.error('Select at least one customer to recharge.');
+            return;
+        }
+        if (selected.length === 1) {
+            navigate(`/customers/${selected[0]}/recharge`);
+        } else {
+            setShowRechargeModal(true);
+        }
+    };
+
     const notYet = (label: string) =>
         toast.info(`${label} will be available once that module is built.`);
 
     return (
-        <AppLayout title="Manage Customers">
+        <AppLayout title={type === 'pppoe' ? 'PPPoE Users' : 'Manage Customers'}>
             <div className="mx-auto max-w-7xl space-y-5">
                 {/* Action bar — mirrors legacy Manage Contact */}
                 <div className="flex flex-wrap gap-2">
@@ -178,16 +243,10 @@ export default function CustomersIndex() {
                         <Plus className="size-4" /> Deactivate
                     </button>
                     <button
-                        onClick={() => {
-                            if (selected.length !== 1) {
-                                toast.error('Select exactly one customer to recharge.');
-                                return;
-                            }
-                            navigate(`/customers/${selected[0]}/recharge`);
-                        }}
+                        onClick={handleRechargeClick}
                         className={cn(ACTION_BTN, 'bg-[#2f6fb0] hover:bg-[#285f99]')}
                     >
-                        <Plus className="size-4" /> Recharge
+                        <Plus className="size-4" /> Recharge {selected.length > 1 ? `(${selected.length})` : ''}
                     </button>
                     <button
                         onClick={() => notYet('Change MAC')}
@@ -197,7 +256,7 @@ export default function CustomersIndex() {
                     </button>
                 </div>
 
-                {/* Search bar — Search + Search By ID */}
+                {/* Search bar */}
                 <form onSubmit={submitSearch} className="flex flex-wrap items-stretch gap-2">
                     <span className="flex items-center rounded bg-[#13366e] px-3 text-white">
                         <Search className="size-4" />
@@ -206,8 +265,18 @@ export default function CustomersIndex() {
                         placeholder="Search by Username..."
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
-                        className="max-w-md flex-1 bg-background"
+                        className="max-w-xs bg-background"
                     />
+                    <div className="flex items-center bg-background border rounded-md px-2">
+                        <CalendarIcon className="size-4 text-muted-foreground mr-2" />
+                        <span className="text-sm text-muted-foreground whitespace-nowrap mr-2">Expires Before:</span>
+                        <input 
+                            type="date"
+                            value={expiresBefore}
+                            onChange={e => setExpiresBefore(e.target.value)}
+                            className="bg-transparent border-0 text-sm outline-none"
+                        />
+                    </div>
                     <Button type="submit" className="bg-[#13366e] hover:bg-[#0f2a57]">
                         Search
                     </Button>
@@ -251,8 +320,8 @@ export default function CustomersIndex() {
                                             <TableHead>Username</TableHead>
                                             <TableHead>Profile</TableHead>
                                             <TableHead>Batch</TableHead>
-                                            <TableHead>Created_date</TableHead>
-                                            <TableHead>POS Owner</TableHead>
+                                            <TableHead>Expiration</TableHead>
+                                            <TableHead>Status</TableHead>
                                             <TableHead className="text-right">
                                                 Actions
                                             </TableHead>
@@ -293,12 +362,14 @@ export default function CustomersIndex() {
                                                         </Badge>
                                                     )}
                                                 </TableCell>
-                                                <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
-                                                    {c.created_at
-                                                        ?.replace('T', ' ')
-                                                        .slice(0, 19)}
+                                                <TableCell className="whitespace-nowrap text-sm font-medium">
+                                                    {c.expiration ? c.expiration.slice(0, 10) : '—'}
                                                 </TableCell>
-                                                <TableCell>{c.generated_by}</TableCell>
+                                                <TableCell>
+                                                    <Badge variant={c.status === 'active' ? 'default' : 'secondary'}>
+                                                        {c.status}
+                                                    </Badge>
+                                                </TableCell>
                                                 <TableCell className="text-right">
                                                     <div className="flex justify-end gap-1">
                                                         <Button
@@ -338,6 +409,39 @@ export default function CustomersIndex() {
                     </CardContent>
                 </Card>
             </div>
+
+            <Dialog open={showRechargeModal} onOpenChange={setShowRechargeModal}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Bulk Recharge Users ({selected.length})</DialogTitle>
+                    </DialogHeader>
+                    <div className="py-4">
+                        <label className="text-sm font-medium block mb-2">Select Plan</label>
+                        <Select value={selectedPlanId} onValueChange={setSelectedPlanId}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Choose a plan" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {plansData?.data?.map((p) => (
+                                    <SelectItem key={p.id} value={p.id.toString()}>
+                                        {p.name} — {p.price}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setShowRechargeModal(false)}>Cancel</Button>
+                        <Button 
+                            onClick={() => bulkRechargeMutation.mutate()} 
+                            disabled={!selectedPlanId || bulkRechargeMutation.isPending}
+                        >
+                            {bulkRechargeMutation.isPending ? 'Recharging...' : 'Confirm Bulk Recharge'}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
         </AppLayout>
     );
 }

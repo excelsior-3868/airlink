@@ -18,7 +18,7 @@ class CustomerApiController extends Controller
 
     public function index(Request $request): AnonymousResourceCollection
     {
-        $page = $this->customers->paginate($request->only('search', 'status', 'type', 'id'), 25);
+        $page = $this->customers->paginate($request->only('search', 'status', 'type', 'id', 'expires_before'), 25);
 
         return CustomerResource::collection($page);
     }
@@ -82,6 +82,21 @@ class CustomerApiController extends Controller
 
         return response()->json([
             'message' => 'Customer deleted.'
+        ]);
+    }
+
+    public function resetMac(Request $request, Customer $customer): JsonResponse
+    {
+        $this->authorize('update', $customer);
+
+        $data = $request->validate([
+            'mac_address' => 'required|string|max:17',
+        ]);
+
+        $this->customers->resetMacBinding($customer, $data['mac_address']);
+
+        return response()->json([
+            'message' => 'MAC address binding updated.'
         ]);
     }
 }

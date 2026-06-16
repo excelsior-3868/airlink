@@ -140,4 +140,13 @@ class RouterOSService
 
         return sprintf('%02d:%02d:00', intdiv($minutes, 60), $minutes % 60);
     }
+
+    public function getLogs(Router $router): array
+    {
+        $client = $this->connect($router);
+        $rows = $client->query((new Query('/log/print')))->read();
+        
+        // Reverse so the newest logs are first
+        return array_reverse($rows);
+    }
 }

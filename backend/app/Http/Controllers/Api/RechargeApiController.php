@@ -49,4 +49,29 @@ class RechargeApiController extends Controller
             ],
         ], 201);
     }
+
+    public function bulkRecharge(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'customer_ids' => ['required', 'array'],
+            'customer_ids.*' => ['integer', 'exists:customers,id'],
+            'plan_id' => ['required', 'exists:plans,id'],
+            'method' => ['required', 'string', 'max:100'],
+        ]);
+
+        $plan = Plan::findOrFail($data['plan_id']);
+        $customers = Customer::whereIn('id', $data['customer_ids'])->get();
+        $successful = 0;
+
+        foreach ($customers as $customer) {
+            $this->recharges->recharge($customer, $plan, [
+                'method' => $data['method'],
+            ]);
+            $successful++;
+        }
+
+        return response()->json([
+            'message' => "Successfully recharged {$successful} customers."
+        ], 200);
+    }
 }

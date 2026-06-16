@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use App\Auth\LegacyEloquentUserProvider;
+use App\Models\Bandwidth;
+use App\Models\Plan;
+use App\Observers\BandwidthObserver;
+use App\Observers\PlanObserver;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -29,5 +33,8 @@ class AppServiceProvider extends ServiceProvider
         Auth::provider('legacy-eloquent', function ($app, array $config) {
             return new LegacyEloquentUserProvider($app['hash'], $config['model']);
         });
+
+        Bandwidth::observe(BandwidthObserver::class);
+        Plan::observe(PlanObserver::class);
     }
 }

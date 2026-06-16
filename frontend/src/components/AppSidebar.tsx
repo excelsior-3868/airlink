@@ -29,12 +29,14 @@ import {
     Activity,
     Wallet,
     Wifi,
+    Settings,
 } from 'lucide-react';
 
 interface NavItem {
     label: string;
     path?: string; // target path
     match?: string; // pathname check
+    exact?: boolean; // exact match
 }
 
 interface NavGroup {
@@ -54,7 +56,8 @@ const NAV: NavGroup[] = [
         match: '/customers',
         roles: ['admin', 'sales'],
         items: [
-            { label: 'User Details', path: '/customers', match: '/customers' },
+            { label: 'Hotspot Users', path: '/customers', match: '/customers', exact: true },
+            { label: 'PPPoE Users', path: '/customers/pppoe', match: '/customers/pppoe' },
         ],
     },
     {
@@ -63,7 +66,8 @@ const NAV: NavGroup[] = [
         match: '/plans',
         roles: ['admin'],
         items: [
-            { label: 'Plans', path: '/plans', match: '/plans' },
+            { label: 'Hotspot Plans', path: '/plans', match: '/plans', exact: true },
+            { label: 'PPPoE Plans', path: '/plans/pppoe', match: '/plans/pppoe' },
             { label: 'Bandwidth', path: '/bandwidth', match: '/bandwidth' },
         ],
     },
@@ -84,6 +88,8 @@ const NAV: NavGroup[] = [
         items: [
             { label: 'Routers', path: '/routers', match: '/routers' },
             { label: 'IP Pools', path: '/pools', match: '/pools' },
+            { label: 'IP Bind', path: '/ip-bindings', match: '/ip-bindings' },
+            { label: 'NAS Logs', path: '/nas/logs', match: '/nas/logs' },
         ],
     },
     {
@@ -97,16 +103,39 @@ const NAV: NavGroup[] = [
         ],
     },
     { label: 'Wallet', icon: Wallet, path: '/wallet', match: '/wallet', roles: ['admin'] },
-    { label: 'Reports', icon: FileBarChart, path: '/reports', match: '/reports', roles: ['admin', 'sales'] },
+    {
+        label: 'Reports',
+        icon: FileBarChart,
+        match: '/reports',
+        roles: ['admin', 'sales'],
+        items: [
+            { label: 'Recharge History', path: '/reports', match: '/reports', exact: true },
+            { label: 'Billings Dashboard', path: '/reports/billings', match: '/reports/billings' },
+        ],
+    },
     { label: 'Messages', icon: Mail, path: '/messages', match: '/messages' },
+    {
+        label: 'Administration',
+        icon: Settings,
+        match: '/administration',
+        roles: ['admin'],
+        items: [
+            { label: 'System Users', path: '/administration/users', match: '/administration/users' },
+            { label: 'General Settings', path: '/administration/settings', match: '/administration/settings' },
+            { label: 'Backup / Restore', path: '/administration/backup', match: '/administration/backup' },
+        ],
+    },
 ];
 
 export function AppSidebar() {
     const location = useLocation();
     const { user } = useAuth();
 
-    const isCurrent = (pattern?: string) => {
+    const isCurrent = (pattern?: string, exact?: boolean) => {
         if (!pattern) return false;
+        if (exact) {
+            return location.pathname === pattern;
+        }
         return location.pathname.startsWith(pattern);
     };
 
@@ -158,6 +187,7 @@ export function AppSidebar() {
                                                             asChild
                                                             isActive={isCurrent(
                                                                 item.match,
+                                                                item.exact
                                                             )}
                                                         >
                                                             <Link

@@ -37,4 +37,37 @@ class ReportApiController extends Controller
             ]
         ]);
     }
+
+    public function billings(Request $request): JsonResponse
+    {
+        $year = $request->input('year', now()->year);
+
+        // Fetch monthly recharge data for the given year
+        $monthlyData = Transaction::query()
+            ->select(
+                DB::raw('MONTH(recharged_on) as month'),
+                DB::raw('SUM(CAST(price AS UNSIGNED)) as total')
+            )
+            ->whereYear('recharged_on', $year)
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $graph = collect(range(1, 12))->map(function ($month) use ($monthlyData) {
+            $data = $monthlyData->firstWhere('month', $month);
+            return [
+                'month' => date('M', mktime(0, 0, 0, $month, 10)),
+                'total' => $data ? (int) $data->total : 0,
+            ];
+        });
+
+        // Company Balance
+        $companyBalance = \App\Models\CompanyWallet::first()?->balance ?? 0;
+
+        return response()->json([
+            'graph' => $graph,
+            'company_balance' => $companyBalance,
+            'year' => $year
+        ]);
+    }
 }

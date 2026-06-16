@@ -58,4 +58,14 @@ class RouterApiController extends Controller
             'message' => 'Router deleted.'
         ]);
     }
+
+    public function logs(Router $router, \App\Services\Provisioning\RouterOSService $ros): JsonResponse
+    {
+        try {
+            $logs = $ros->getLogs($router);
+            return response()->json(['logs' => $logs]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to connect to router: ' . $e->getMessage()], 500);
+        }
+    }
 }

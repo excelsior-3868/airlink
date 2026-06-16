@@ -11,6 +11,9 @@ use App\Http\Controllers\Api\PoolApiController;
 use App\Http\Controllers\Api\RechargeApiController;
 use App\Http\Controllers\Api\ReportApiController;
 use App\Http\Controllers\Api\RouterApiController;
+use App\Http\Controllers\Api\IpBindingApiController;
+use App\Http\Controllers\Api\SettingApiController;
+use App\Http\Controllers\Api\UserApiController;
 use App\Http\Controllers\Api\VoucherApiController;
 use App\Http\Controllers\Api\WalletApiController;
 use Illuminate\Support\Facades\Route;
@@ -34,14 +37,17 @@ Route::name('api.')->prefix('v1')->group(function () {
         // Sales / Admins
         Route::middleware('role:admin,sales')->group(function () {
             Route::post('customers/bulk-action', [CustomerApiController::class, 'bulkAction']);
+            Route::post('customers/{customer}/reset-mac', [CustomerApiController::class, 'resetMac']);
             Route::apiResource('customers', CustomerApiController::class);
 
             Route::get('vouchers/options', [VoucherApiController::class, 'options']);
             Route::apiResource('vouchers', VoucherApiController::class)->only(['index', 'store', 'destroy']);
 
             Route::get('recharge/plans', [RechargeApiController::class, 'plans']);
+            Route::post('recharge/bulk', [RechargeApiController::class, 'bulkRecharge']);
             Route::post('customers/{customer}/recharge', [RechargeApiController::class, 'recharge']);
 
+            Route::get('reports/billings', [ReportApiController::class, 'billings']);
             Route::get('reports', [ReportApiController::class, 'index']);
         });
 
@@ -55,13 +61,23 @@ Route::name('api.')->prefix('v1')->group(function () {
             Route::get('pools/options', [PoolApiController::class, 'options']);
             Route::apiResource('pools', PoolApiController::class);
 
-            Route::apiResource('routers', RouterApiController::class);
+            Route::get('routers/{router}/logs', [\App\Http\Controllers\Api\RouterApiController::class, 'logs']);
+            Route::apiResource('routers', \App\Http\Controllers\Api\RouterApiController::class);
+
+            Route::apiResource('ip-bindings', IpBindingApiController::class);
 
             Route::get('wallet', [WalletApiController::class, 'index']);
             Route::post('wallet/load', [WalletApiController::class, 'load']);
 
             Route::get('monitor/sessions', [MonitorApiController::class, 'sessions']);
             Route::get('monitor/logs', [MonitorApiController::class, 'logs']);
+
+            Route::apiResource('users', UserApiController::class);
+            Route::get('settings', [SettingApiController::class, 'index']);
+            Route::post('settings', [SettingApiController::class, 'update']);
+
+            Route::get('backup/export', [\App\Http\Controllers\Api\BackupApiController::class, 'export']);
+            Route::post('backup/import', [\App\Http\Controllers\Api\BackupApiController::class, 'import']);
         });
     });
 });

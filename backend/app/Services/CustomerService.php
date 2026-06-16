@@ -14,7 +14,7 @@ class CustomerService
     /**
      * Paginated, searchable customer listing.
      *
-     * @param  array{search?:string,status?:string,type?:string}  $filters
+     * @param  array{search?:string,status?:string,type?:string,expires_before?:string}  $filters
      */
     public function paginate(array $filters = [], int $perPage = 20): LengthAwarePaginator
     {
@@ -31,6 +31,7 @@ class CustomerService
             ))
             ->when($filters['status'] ?? null, fn ($q, $status) => $q->where('status', $status))
             ->when($filters['type'] ?? null, fn ($q, $type) => $q->where('type', $type))
+            ->when($filters['expires_before'] ?? null, fn ($q, $date) => $q->where('expiration', '<=', $date))
             ->latest('id')
             ->paginate($perPage)
             ->withQueryString();
@@ -65,6 +66,14 @@ class CustomerService
             $customer->recharges()->delete();
             $customer->delete();
         });
+    }
+
+    /** Reset the MAC address lock for the user in the RADIUS accounting table. */
+    public function resetMacBinding(Customer $customer, string $newMac): void
+    {
+        DB::table('radacct')
+            ->where('username', $customer->username)
+            ->update(['callingstationid' => $newMac]);
     }
 
     /** Recharge + transaction history for the detail page. */
