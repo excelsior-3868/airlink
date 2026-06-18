@@ -8,6 +8,7 @@ export interface Customer {
     batch: string | null;
     type: string | null;
     status: string;
+    expiration: string | null;
     generated_by: string | null; // POS Owner
     last_login_at: string | null;
     created_at: string;
@@ -105,3 +106,6 @@ export interface Transaction {
     expiration: string | null;
     type: string;
 }
+
+// Alias so pages can import either `Router` or `RouterModel`
+export type Router = RouterModel;

@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/table';
 import { Link } from 'react-router-dom';
 import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
-import { FormEventHandler, ReactNode, useState, useEffect } from 'react';
+import { type FormEventHandler, type ReactNode, useState, useEffect } from 'react';
 
 export interface Column<T> {
     header: string;

@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import AppLayout from '@/Layouts/AppLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { IndianRupee } from 'lucide-react'; // using IndianRupee as generic currency icon if needed, or Banknote
 import { Banknote } from 'lucide-react';
 
 export default function BillingsDashboard() {
