@@ -289,8 +289,8 @@ return new class extends Migration
         // 16. Restructure tbl_message
         if (Schema::hasTable('tbl_message')) {
             if (Schema::hasColumn('tbl_message', 'is_read')) {
-                DB::statement("UPDATE tbl_message SET is_read = '1' WHERE is_read = 1 OR is_read = 'true'");
-                DB::statement("UPDATE tbl_message SET is_read = '0' WHERE is_read = 0 OR is_read = 'false' OR is_read IS NULL");
+                DB::statement("UPDATE tbl_message SET is_read = 1 WHERE is_read = 1");
+                DB::statement("UPDATE tbl_message SET is_read = 0 WHERE is_read = 0 OR is_read IS NULL");
 
                 Schema::table('tbl_message', function (Blueprint $table) {
                     $table->renameColumn('is_read', 'status');
