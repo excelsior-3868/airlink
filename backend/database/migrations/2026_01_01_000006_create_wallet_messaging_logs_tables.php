@@ -12,71 +12,67 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('wallets', function (Blueprint $table) {
-            $table->id();
-            $table->string('username', 200);
-            $table->string('user_type', 200)->nullable();
+        // wallet
+        Schema::create('wallet', function (Blueprint $table) {
+            $table->increments('id');
             $table->integer('credit_limit')->nullable();
-            $table->integer('credit_balance')->default(0);
+            $table->integer('credit_balance');
             $table->integer('available_balance')->nullable();
+            $table->string('username', 200);
             $table->date('last_loaded_date')->nullable();
             $table->string('loaded_by', 200)->nullable();
             $table->string('last_collected_by', 50)->nullable();
             $table->string('last_registered_by', 50)->nullable();
-            $table->unsignedBigInteger('legacy_id')->nullable()->index();
-            $table->timestamps();
+            $table->string('user_type', 200)->nullable();
         });
 
-        Schema::create('company_wallet', function (Blueprint $table) {
-            $table->id();
+        // walletCompany
+        Schema::create('walletCompany', function (Blueprint $table) {
+            $table->increments('id');
             $table->integer('account_balance')->nullable();
             $table->integer('balance_to_collect')->nullable();
             $table->date('last_loaded_date')->nullable();
-            $table->timestamps();
         });
 
-        Schema::create('messages', function (Blueprint $table) {
-            $table->id();
+        // tbl_message
+        Schema::create('tbl_message', function (Blueprint $table) {
+            $table->increments('id');
             $table->string('from_user', 32);
             $table->string('to_user', 32);
             $table->string('title', 60);
             $table->mediumText('message');
-            $table->boolean('is_read')->default(false);     // legacy status enum '0'/'1'
-            $table->dateTime('sent_at');
-            $table->unsignedBigInteger('legacy_id')->nullable()->index();
-            $table->timestamps();
+            $table->enum('status', ['0', '1'])->default('0');
+            $table->dateTime('date');
         });
 
-        Schema::create('activity_logs', function (Blueprint $table) {
-            $table->id();
-            $table->dateTime('logged_at')->nullable();
+        // tbl_logs
+        Schema::create('tbl_logs', function (Blueprint $table) {
+            $table->increments('id');
+            $table->dateTime('date')->nullable();
             $table->string('type', 50)->nullable();
             $table->mediumText('description')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable()->index();
+            $table->integer('userid')->nullable();
+            $table->mediumText('ip')->nullable();
             $table->string('username', 200)->nullable();
-            $table->string('ip', 100)->nullable();
-            $table->unsignedBigInteger('legacy_id')->nullable()->index();
-            $table->timestamps();
         });
 
-        Schema::create('ip_bindings', function (Blueprint $table) {
-            $table->id();
+        // tbl_ip_binding
+        Schema::create('tbl_ip_binding', function (Blueprint $table) {
+            $table->increments('id');
             $table->string('mac_address', 100);
             $table->string('address', 100);
             $table->string('nas', 100);
             $table->string('consumer_name', 100);
             $table->string('registered_by', 100);
-            $table->unsignedBigInteger('legacy_id')->nullable()->index();
-            $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('ip_bindings');
-        Schema::dropIfExists('activity_logs');
-        Schema::dropIfExists('messages');
-        Schema::dropIfExists('company_wallet');
-        Schema::dropIfExists('wallets');
+        Schema::dropIfExists('tbl_ip_binding');
+        Schema::dropIfExists('tbl_logs');
+        Schema::dropIfExists('tbl_message');
+        Schema::dropIfExists('walletCompany');
+        Schema::dropIfExists('wallet');
     }
 };

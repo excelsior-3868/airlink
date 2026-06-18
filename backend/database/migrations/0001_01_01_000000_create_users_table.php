@@ -11,36 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Staff / operator accounts (legacy tbl_users). Login by username.
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('username')->unique();
-            $table->string('name');                       // legacy fullname
-            $table->string('email')->nullable()->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->enum('role', ['admin', 'sales', 'regular', 'pos'])->default('regular');
-            $table->string('access_control', 20)->default('0');
-            $table->enum('status', ['active', 'inactive'])->default('active');
-            $table->timestamp('last_login_at')->nullable();
-            $table->unsignedBigInteger('legacy_id')->nullable()->index();
-            $table->rememberToken();
-            $table->timestamps();
-        });
-
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
-
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
+        Schema::create('tbl_users', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('username', 45)->default('')->unique();
+            $table->string('fullname', 45)->default('');
+            $table->mediumText('password');
+            $table->enum('user_type', ['Admin', 'Sales', 'Regular', 'POS'])->nullable();
+            $table->string('access_control', 10)->default('0');
+            $table->enum('status', ['Active', 'Inactive'])->default('Active');
+            $table->dateTime('last_login')->nullable();
+            $table->dateTime('creationdate')->useCurrent();
         });
     }
 
@@ -49,8 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
+        Schema::dropIfExists('tbl_users');
     }
 };

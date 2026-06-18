@@ -26,7 +26,7 @@ class PlanRequest extends FormRequest
             'time_unit' => ['nullable', 'in:Mins,Hrs'],
             'data_limit' => ['nullable', 'integer', 'min:0'],
             'data_unit' => ['nullable', 'in:MB,GB'],
-            'bandwidth_id' => ['nullable', 'exists:bandwidths,id'],
+            'bandwidth_id' => ['nullable', 'exists:tbl_bandwidth,id'],
             'price' => ['nullable', 'integer', 'min:0'],
             'data_usage_gb' => ['nullable', 'integer', 'min:0'],
             'daily_quota' => ['nullable', 'integer', 'min:0'],

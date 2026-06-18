@@ -4,10 +4,10 @@ namespace App\Enums;
 
 enum UserRole: string
 {
-    case Admin = 'admin';
-    case Sales = 'sales';
-    case Regular = 'regular';
-    case Pos = 'pos';
+    case Admin = 'Admin';
+    case Sales = 'Sales';
+    case Regular = 'Regular';
+    case Pos = 'POS';
 
     public function label(): string
     {

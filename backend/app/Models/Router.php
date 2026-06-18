@@ -6,8 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Router extends Model
 {
+    protected $table = 'tbl_routers';
+
+    public $timestamps = false;
+
     protected $fillable = [
-        'name', 'ip_address', 'username', 'password', 'api_port', 'use_ssl', 'description', 'legacy_id',
+        'name', 'ip_address', 'username', 'password', 'description',
     ];
 
     protected $hidden = ['password'];
@@ -15,9 +19,7 @@ class Router extends Model
     protected function casts(): array
     {
         return [
-            'password' => 'encrypted',   // AES-256 via APP_KEY
-            'use_ssl' => 'boolean',
-            'api_port' => 'integer',
+            'password' => 'encrypted',
         ];
     }
 }

@@ -71,7 +71,7 @@ test('recharge provisions RADIUS and records recharge + transaction', function (
     expect($attrs['Expire-After'])->toBe((string) (30 * 86400));
     expect($attrs['Total-Volume-Limit'])->toBe((string) (2 * 1024 * 1024 * 1024));
 
-    $rate = RadReply::where('username', 'sub1')->where('attribute', 'Mikrotik-Rate-Limit')->value('value');
+    $rate = \App\Models\RadGroupReply::where('groupname', 'bw5')->where('attribute', 'Mikrotik-Rate-Limit')->value('value');
     expect($rate)->toBe('5M/10M');
 });
 

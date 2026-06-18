@@ -14,46 +14,39 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('recharges', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
-            $table->string('customer_ref', 200)->nullable();    // legacy customer_id (raw)
+        Schema::create('tbl_user_recharges', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('customer_id', 200);
             $table->string('username', 32);
-            $table->foreignId('plan_id')->nullable()->constrained('plans')->nullOnDelete();
-            $table->string('plan_name', 40);                    // legacy namebp
+            $table->integer('plan_id');
+            $table->string('namebp', 40);
             $table->date('recharged_on');
             $table->date('expiration')->nullable();
             $table->time('time');
-            $table->string('status', 20);                       // on / off
+            $table->string('status', 20);
             $table->string('method', 100)->nullable();
-            $table->string('router_name', 32)->nullable();
+            $table->string('routers', 32);
             $table->string('type', 15);
-            $table->unsignedBigInteger('legacy_id')->nullable()->index();
-            $table->timestamps();
-
-            $table->index(['status', 'expiration']);            // expiration scheduler scans
         });
 
-        Schema::create('transactions', function (Blueprint $table) {
-            $table->id();
-            $table->string('invoice', 25)->index();
-            $table->string('username', 32)->index();
+        Schema::create('tbl_transactions', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('invoice', 25);
+            $table->string('username', 32);
             $table->string('plan_name', 40);
             $table->string('price', 40);
             $table->date('recharged_on');
             $table->date('expiration')->nullable();
             $table->time('time');
             $table->string('method', 100)->nullable();
-            $table->string('router_name', 32)->nullable();
+            $table->string('routers', 32);
             $table->enum('type', ['Hotspot', 'PPPOE']);
-            $table->unsignedBigInteger('legacy_id')->nullable()->index();
-            $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('transactions');
-        Schema::dropIfExists('recharges');
+        Schema::dropIfExists('tbl_transactions');
+        Schema::dropIfExists('tbl_user_recharges');
     }
 };

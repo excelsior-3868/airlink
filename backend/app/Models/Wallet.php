@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Wallet extends Model
 {
+    protected $table = 'wallet';
+
+    public $timestamps = false;
+
     protected $fillable = [
         'username', 'user_type', 'credit_limit', 'credit_balance', 'available_balance',
-        'last_loaded_date', 'loaded_by', 'last_collected_by', 'last_registered_by', 'legacy_id',
+        'last_loaded_date', 'loaded_by', 'last_collected_by', 'last_registered_by',
     ];
 
     protected function casts(): array

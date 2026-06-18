@@ -15,6 +15,10 @@ class Customer extends Authenticatable
     /** @use HasFactory<\Database\Factories\CustomerFactory> */
     use HasFactory, Notifiable;
 
+    protected $table = 'tbl_customers';
+
+    public $timestamps = false;
+
     protected $fillable = [
         'username',
         'password',
@@ -29,8 +33,8 @@ class Customer extends Authenticatable
         'generated_by',
         'generated_for',
         'status',
-        'last_login_at',
-        'legacy_id',
+        'last_login',
+        'created_at',
     ];
 
     protected $hidden = [
@@ -41,18 +45,29 @@ class Customer extends Authenticatable
     protected function casts(): array
     {
         return [
-            'last_login_at' => 'datetime',
+            'last_login' => 'datetime',
+            'created_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
 
     public function recharges(): HasMany
     {
-        return $this->hasMany(Recharge::class);
+        return $this->hasMany(Recharge::class, 'username', 'username');
     }
 
     public function activeRecharge(): ?Recharge
     {
         return $this->recharges()->where('status', 'on')->latest('expiration')->first();
+    }
+
+    public function getLastLoginAtAttribute()
+    {
+        return $this->last_login;
+    }
+
+    public function setLastLoginAtAttribute($value)
+    {
+        $this->attributes['last_login'] = $value;
     }
 }

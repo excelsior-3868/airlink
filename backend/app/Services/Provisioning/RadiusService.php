@@ -44,6 +44,4 @@ class RadiusService
         RadCheck::where('username', $username)->delete();
         RadReply::where('username', $username)->delete();
     }
-
-    }
 }

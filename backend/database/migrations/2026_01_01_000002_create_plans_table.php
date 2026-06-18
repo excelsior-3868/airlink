@@ -12,13 +12,13 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 40);
-            $table->foreignId('bandwidth_id')->nullable()->constrained('bandwidths')->nullOnDelete();
+        Schema::create('tbl_plans', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name_plan', 40);
+            $table->integer('id_bw');
             $table->integer('price')->nullable();
             $table->enum('type', ['Hotspot', 'PPPOE']);
-            $table->enum('bandwidth_policy', ['Unlimited', 'Limited'])->nullable(); // legacy typebp
+            $table->enum('typebp', ['Unlimited', 'Limited'])->nullable();
             $table->enum('limit_type', ['Time_Limit', 'Data_Limit', 'Both_Limit'])->nullable();
             $table->unsignedInteger('time_limit')->nullable();
             $table->enum('time_unit', ['Mins', 'Hrs'])->nullable();
@@ -27,18 +27,16 @@ return new class extends Migration
             $table->integer('validity');
             $table->string('validity_unit', 20)->nullable();
             $table->integer('shared_users')->nullable();
-            $table->string('router_name', 32)->default('0');
+            $table->string('routers', 32)->default('0');
             $table->string('pool', 40)->nullable();
             $table->integer('access_control')->default(0);
             $table->integer('data_usage_gb')->default(0);
             $table->integer('daily_quota')->default(0);
-            $table->unsignedBigInteger('legacy_id')->nullable()->index();
-            $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('plans');
+        Schema::dropIfExists('tbl_plans');
     }
 };

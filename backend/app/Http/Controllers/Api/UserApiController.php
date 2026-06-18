@@ -25,14 +25,14 @@ class UserApiController extends Controller
     public function store(Request $request): JsonResponse
     {
         $data = $request->validate([
-            'username' => 'required|string|max:255|unique:users',
+            'username' => 'required|string|max:255|unique:tbl_users,username',
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255|unique:users',
             'password' => 'required|string|min:4',
             'role' => ['required', Rule::enum(UserRole::class)],
-            'status' => 'required|in:active,inactive',
+            'status' => 'required|in:Active,Inactive,active,inactive',
         ]);
 
+        $data['status'] = ucfirst(strtolower($data['status']));
         $user = User::create($data);
 
         return response()->json([
@@ -49,13 +49,14 @@ class UserApiController extends Controller
     public function update(Request $request, User $user): JsonResponse
     {
         $data = $request->validate([
-            'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'username' => ['required', 'string', 'max:255', Rule::unique('tbl_users', 'username')->ignore($user->id)],
             'name' => 'required|string|max:255',
-            'email' => ['nullable', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:4',
             'role' => ['required', Rule::enum(UserRole::class)],
-            'status' => 'required|in:active,inactive',
+            'status' => 'required|in:Active,Inactive,active,inactive',
         ]);
+
+        $data['status'] = ucfirst(strtolower($data['status']));
 
         if (empty($data['password'])) {
             unset($data['password']);

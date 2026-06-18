@@ -19,7 +19,7 @@ class VoucherController extends Controller
     {
         return Inertia::render('Vouchers/Index', [
             'vouchers' => Voucher::query()
-                ->with('plan:id,name')
+                ->with('plan:id,name_plan')
                 ->when($request->search, fn ($q, $s) => $q->where('code', 'like', "%{$s}%")->orWhere('batch', 'like', "%{$s}%"))
                 ->when($request->status, fn ($q, $v) => $q->where('status', $v))
                 ->latest('id')
@@ -32,14 +32,14 @@ class VoucherController extends Controller
     public function create(): Response
     {
         return Inertia::render('Vouchers/Generate', [
-            'plans' => Plan::orderBy('name')->get(['id', 'name', 'type', 'price']),
+            'plans' => Plan::orderBy('name_plan')->get(['id', 'name_plan', 'type', 'price']),
         ]);
     }
 
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
-            'plan_id' => ['required', 'exists:plans,id'],
+            'plan_id' => ['required', 'exists:tbl_plans,id'],
             'count' => ['required', 'integer', 'min:1', 'max:1000'],
             'code_length' => ['required', 'integer', 'min:4', 'max:20'],
             'batch' => ['nullable', 'string', 'max:200'],

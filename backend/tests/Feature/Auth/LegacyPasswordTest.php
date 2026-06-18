@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 function makeUserWithRawPassword(string $rawHash, array $attrs = []): User
 {
     $user = User::factory()->create($attrs);
-    DB::table('users')->where('id', $user->id)->update(['password' => $rawHash]);
+    DB::table('tbl_users')->where('id', $user->id)->update(['password' => $rawHash]);
 
     return $user->fresh();
 }
@@ -50,8 +50,8 @@ test('wrong password is rejected for legacy hashes', function () {
 test('staff can log in by username via the login screen', function () {
     makeUserWithRawPassword(crypt('123456', '$1$W44.ns/.'), [
         'username' => 'operator1',
-        'role' => App\Enums\UserRole::Admin,
-        'status' => 'active',
+        'user_type' => App\Enums\UserRole::Admin,
+        'status' => 'Active',
     ]);
 
     $response = $this->post('/login', [

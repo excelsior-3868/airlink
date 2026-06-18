@@ -20,7 +20,7 @@ class UpdateCustomerRequest extends FormRequest
         $customerId = $this->route('customer')->id;
 
         return [
-            'username' => ['required', 'string', 'max:200', Rule::unique('customers', 'username')->ignore($customerId)],
+            'username' => ['required', 'string', 'max:200', Rule::unique('tbl_customers', 'username')->ignore($customerId)],
             'password' => ['nullable', 'string', 'min:4', 'max:255'],
             'fullname' => ['nullable', 'string', 'max:100'],
             'address' => ['nullable', 'string'],

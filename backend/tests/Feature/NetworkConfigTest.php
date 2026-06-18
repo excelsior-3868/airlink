@@ -22,7 +22,7 @@ test('admin can create a bandwidth profile', function () {
         ])
         ->assertRedirect(route('bandwidth.index'));
 
-    $this->assertDatabaseHas('bandwidths', ['name' => '10M Plan', 'rate_down' => 10]);
+    $this->assertDatabaseHas('tbl_bandwidth', ['name_bw' => '10M Plan', 'rate_down' => 10]);
 });
 
 test('router secret is stored encrypted', function () {
@@ -37,7 +37,7 @@ test('router secret is stored encrypted', function () {
     $router = Router::where('name', 'core-router')->first();
     expect($router->password)->toBe('super-secret'); // decrypted accessor
     // raw column is ciphertext, not the plaintext
-    $raw = \DB::table('routers')->where('id', $router->id)->value('password');
+    $raw = \DB::table('tbl_routers')->where('id', $router->id)->value('password');
     expect($raw)->not->toBe('super-secret');
 });
 
@@ -56,7 +56,7 @@ test('plan links to a bandwidth profile', function () {
         'price' => 50,
     ])->assertRedirect(route('plans.index'));
 
-    $plan = Plan::where('name', 'Daily Pack')->first();
+    $plan = Plan::where('name_plan', 'Daily Pack')->first();
     expect($plan->bandwidth->name)->toBe('bw1');
 });
 
@@ -71,7 +71,7 @@ test('admin can create and delete a pool', function () {
     $this->actingAs($this->admin)
         ->delete(route('pools.destroy', $pool))
         ->assertRedirect(route('pools.index'));
-    $this->assertDatabaseMissing('pools', ['id' => $pool->id]);
+    $this->assertDatabaseMissing('tbl_pool', ['id' => $pool->id]);
 });
 
 test('sales role cannot manage network config (admin only)', function () {

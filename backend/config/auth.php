@@ -47,6 +47,11 @@ return [
             'driver' => 'session',
             'provider' => 'customers',
         ],
+
+        'sanctum' => [
+            'driver' => 'token-cache',
+            'provider' => 'users',
+        ],
     ],
 
     /*

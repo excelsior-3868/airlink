@@ -1,0 +1,20 @@
+CREATE TABLE `tblcomplaints` (
+  `complaintNumber` int(11) NOT NULL AUTO_INCREMENT,
+  `customerusername` varchar(45) NOT NULL,
+  `registeredBy` varchar(50) DEFAULT NULL,
+  `category` varchar(100) NOT NULL,
+  `subcategory` varchar(255) NOT NULL,
+  `complaintType` varchar(255) NOT NULL,
+  `state` varchar(255) NOT NULL,
+  `noc` varchar(255) NOT NULL,
+  `complaintDetails` mediumtext NOT NULL,
+  `complaintFile` varchar(255) DEFAULT NULL,
+  `regDate` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` varchar(50) DEFAULT NULL,
+  `lastUpdationDate` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`complaintNumber`),
+  KEY `customerusername` (`customerusername`),
+  KEY `FK_Category` (`category`),
+  KEY `FK_registerBy` (`registeredBy`),
+  CONSTRAINT `FK_registerBy` FOREIGN KEY (`registeredBy`) REFERENCES `tbl_users` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

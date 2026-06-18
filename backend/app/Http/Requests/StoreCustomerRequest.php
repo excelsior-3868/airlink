@@ -18,7 +18,7 @@ class StoreCustomerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['required', 'string', 'max:200', Rule::unique('customers', 'username')],
+            'username' => ['required', 'string', 'max:200', Rule::unique('tbl_customers', 'username')],
             'password' => ['required', 'string', 'min:4', 'max:255'],
             'fullname' => ['nullable', 'string', 'max:100'],
             'address' => ['nullable', 'string'],

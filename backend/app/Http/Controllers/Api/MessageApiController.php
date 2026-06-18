@@ -20,7 +20,7 @@ class MessageApiController extends Controller
             : Message::where('to_user', $me);
 
         $messages = $query->latest('id')->paginate(20)->withQueryString();
-        $unread = Message::where('to_user', $me)->where('is_read', false)->count();
+        $unread = Message::where('to_user', $me)->where('status', '0')->count();
 
         return response()->json([
             'messages' => $messages,

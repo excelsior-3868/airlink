@@ -21,13 +21,13 @@ class RechargeApiController extends Controller
 
     public function plans(): AnonymousResourceCollection
     {
-        return PlanResource::collection(Plan::orderBy('name')->get());
+        return PlanResource::collection(Plan::orderBy('name_plan')->get());
     }
 
     public function recharge(Request $request, Customer $customer): JsonResponse
     {
         $data = $request->validate([
-            'plan_id' => ['required', 'exists:plans,id'],
+            'plan_id' => ['required', 'exists:tbl_plans,id'],
             'password' => ['nullable', 'string', 'max:255'],
             'method' => ['required', 'string', 'max:100'],
         ]);
@@ -54,8 +54,8 @@ class RechargeApiController extends Controller
     {
         $data = $request->validate([
             'customer_ids' => ['required', 'array'],
-            'customer_ids.*' => ['integer', 'exists:customers,id'],
-            'plan_id' => ['required', 'exists:plans,id'],
+            'customer_ids.*' => ['integer', 'exists:tbl_customers,id'],
+            'plan_id' => ['required', 'exists:tbl_plans,id'],
             'method' => ['required', 'string', 'max:100'],
         ]);
 

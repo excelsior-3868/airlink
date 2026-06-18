@@ -14,15 +14,18 @@ test('report sums revenue over a date range', function () {
     Transaction::create([
         'invoice' => 'INV-1', 'username' => 'a', 'plan_name' => 'P', 'price' => '100',
         'recharged_on' => now()->toDateString(), 'time' => '10:00:00', 'type' => 'Hotspot',
+        'router_name' => '0',
     ]);
     Transaction::create([
         'invoice' => 'INV-2', 'username' => 'b', 'plan_name' => 'P', 'price' => '250',
         'recharged_on' => now()->toDateString(), 'time' => '11:00:00', 'type' => 'PPPOE',
+        'router_name' => '0',
     ]);
     // out of range
     Transaction::create([
         'invoice' => 'INV-3', 'username' => 'c', 'plan_name' => 'P', 'price' => '999',
         'recharged_on' => now()->subYear()->toDateString(), 'time' => '11:00:00', 'type' => 'Hotspot',
+        'router_name' => '0',
     ]);
 
     $this->actingAs($this->admin)

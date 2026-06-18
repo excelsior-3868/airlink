@@ -19,10 +19,9 @@ class DatabaseSeeder extends Seeder
             ['username' => 'admin'],
             [
                 'name' => 'Administrator',
-                'email' => 'admin@example.com',
                 'password' => \Illuminate\Support\Facades\Hash::make('123456'),
                 'role' => \App\Enums\UserRole::Admin,
-                'status' => 'active',
+                'status' => 'Active',
             ]
         );
     }

@@ -38,7 +38,7 @@ test('admin can create a customer', function () {
         ])
         ->assertRedirect();
 
-    $this->assertDatabaseHas('customers', ['username' => 'newcust']);
+    $this->assertDatabaseHas('tbl_customers', ['username' => 'newcust']);
 
     // password stored hashed (bcrypt), never plaintext
     $c = Customer::where('username', 'newcust')->first();
@@ -70,7 +70,7 @@ test('admin can delete a customer', function () {
         ->delete(route('customers.destroy', $customer))
         ->assertRedirect(route('customers.index'));
 
-    $this->assertDatabaseMissing('customers', ['id' => $customer->id]);
+    $this->assertDatabaseMissing('tbl_customers', ['id' => $customer->id]);
 });
 
 test('bulk action sets status on selected customers', function () {

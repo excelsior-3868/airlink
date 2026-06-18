@@ -54,7 +54,7 @@ test('flutter client can drive a full recharge through the API', function () {
 
     // list plans
     $this->withToken($token)->getJson('/api/v1/plans')
-        ->assertOk()->assertJsonFragment(['name' => 'API Plan']);
+        ->assertOk()->assertJsonFragment(['name_plan' => 'API Plan']);
 
     // recharge
     $this->withToken($token)->postJson("/api/v1/customers/{$customer->id}/recharge", [
@@ -70,7 +70,7 @@ test('flutter client can drive a full recharge through the API', function () {
 
 test('legacy crypt password is upgraded to bcrypt on API login too', function () {
     $u = User::factory()->create(['username' => 'legacyapi', 'role' => UserRole::Admin, 'status' => 'active']);
-    DB::table('users')->where('id', $u->id)->update(['password' => crypt('123456', '$1$abcdefgh')]);
+    DB::table('tbl_users')->where('id', $u->id)->update(['password' => crypt('123456', '$1$abcdefgh')]);
 
     $this->postJson('/api/v1/login', ['username' => 'legacyapi', 'password' => '123456'])->assertOk();
 

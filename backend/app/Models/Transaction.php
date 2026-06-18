@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
+    protected $table = 'tbl_transactions';
+
+    public $timestamps = false;
+
     protected $fillable = [
         'invoice', 'username', 'plan_name', 'price', 'recharged_on', 'expiration',
-        'time', 'method', 'router_name', 'type', 'legacy_id',
+        'time', 'method', 'routers', 'router_name', 'type',
     ];
 
     protected function casts(): array
@@ -17,5 +21,15 @@ class Transaction extends Model
             'recharged_on' => 'date',
             'expiration' => 'date',
         ];
+    }
+
+    public function getRouterNameAttribute()
+    {
+        return $this->routers;
+    }
+
+    public function setRouterNameAttribute($value)
+    {
+        $this->attributes['routers'] = $value;
     }
 }

@@ -15,8 +15,8 @@ class PlanApiController extends Controller
     public function index(Request $request): JsonResponse
     {
         $plans = Plan::query()
-            ->with('bandwidth:id,name')
-            ->when($request->search, fn ($q, $s) => $q->where('name', 'like', "%{$s}%"))
+            ->with('bandwidth:id,name_bw')
+            ->when($request->search, fn ($q, $s) => $q->where('name_plan', 'like', "%{$s}%"))
             ->when($request->type, fn ($q, $t) => $q->where('type', $t))
             ->latest('id')
             ->paginate(20)
@@ -28,7 +28,7 @@ class PlanApiController extends Controller
     public function options(): JsonResponse
     {
         return response()->json([
-            'bandwidths' => Bandwidth::orderBy('name')->get(['id', 'name']),
+            'bandwidths' => Bandwidth::orderBy('name_bw')->get(['id', 'name_bw']),
             'routers' => Router::orderBy('name')->pluck('name')->all(),
         ]);
     }

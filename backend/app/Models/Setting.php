@@ -10,14 +10,18 @@ use Illuminate\Support\Facades\Cache;
  */
 class Setting extends Model
 {
-    protected $fillable = ['key', 'value'];
+    protected $table = 'tbl_appconfig';
+
+    public $timestamps = false;
+
+    protected $fillable = ['setting', 'value'];
 
     public const CACHE_KEY = 'app.settings';
 
-    /** All settings as a cached associative array (key => value). */
+    /** All settings as a cached associative array (setting => value). */
     public static function values(): array
     {
-        return Cache::rememberForever(self::CACHE_KEY, fn () => static::query()->pluck('value', 'key')->all());
+        return Cache::rememberForever(self::CACHE_KEY, fn () => static::query()->pluck('value', 'setting')->all());
     }
 
     public static function get(string $key, mixed $default = null): mixed
@@ -27,8 +31,18 @@ class Setting extends Model
 
     public static function put(string $key, mixed $value): void
     {
-        static::updateOrCreate(['key' => $key], ['value' => $value]);
+        static::updateOrCreate(['setting' => $key], ['value' => $value]);
         Cache::forget(self::CACHE_KEY);
+    }
+
+    public function getKeyAttribute()
+    {
+        return $this->setting;
+    }
+
+    public function setKeyAttribute($value)
+    {
+        $this->attributes['setting'] = $value;
     }
 
     protected static function booted(): void

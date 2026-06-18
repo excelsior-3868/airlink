@@ -34,6 +34,22 @@ class AppServiceProvider extends ServiceProvider
             return new LegacyEloquentUserProvider($app['hash'], $config['model']);
         });
 
+        // Custom token-cache guard that operates without personal_access_tokens table
+        Auth::extend('token-cache', function ($app, $name, array $config) {
+            return new \Illuminate\Auth\RequestGuard(function ($request) use ($config) {
+                $token = $request->bearerToken();
+                if (! $token) {
+                    return null;
+                }
+                $userId = \Illuminate\Support\Facades\Cache::get("api_token:{$token}");
+                if (! $userId) {
+                    return null;
+                }
+                $provider = Auth::createUserProvider($config['provider']);
+                return $provider->retrieveById($userId);
+            }, $app['request']);
+        });
+
         Bandwidth::observe(BandwidthObserver::class);
         Plan::observe(PlanObserver::class);
     }

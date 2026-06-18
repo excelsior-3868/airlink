@@ -6,5 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pool extends Model
 {
-    protected $fillable = ['pool_name', 'range_ip', 'router_name', 'legacy_id'];
+    protected $table = 'tbl_pool';
+
+    public $timestamps = false;
+
+    protected $fillable = ['pool_name', 'range_ip', 'routers', 'router_name'];
+
+    public function getRouterNameAttribute()
+    {
+        return $this->routers;
+    }
+
+    public function setRouterNameAttribute($value)
+    {
+        $this->attributes['routers'] = $value;
+    }
 }

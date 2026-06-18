@@ -18,7 +18,7 @@ class RechargeController extends Controller
     {
         return Inertia::render('Recharge/Create', [
             'customer' => $customer->only('id', 'username', 'fullname', 'profile', 'type', 'status'),
-            'plans' => Plan::orderBy('name')->get(['id', 'name', 'type', 'price', 'validity', 'validity_unit']),
+            'plans' => Plan::orderBy('name_plan')->get(['id', 'name_plan', 'type', 'price', 'validity', 'validity_unit']),
             'activeRecharge' => $customer->recharges()->where('status', 'on')->latest('id')->first(),
         ]);
     }
@@ -26,7 +26,7 @@ class RechargeController extends Controller
     public function store(Request $request, Customer $customer): RedirectResponse
     {
         $data = $request->validate([
-            'plan_id' => ['required', 'exists:plans,id'],
+            'plan_id' => ['required', 'exists:tbl_plans,id'],
             'password' => ['nullable', 'string', 'max:255'],
             'method' => ['required', 'string', 'max:100'],
         ]);

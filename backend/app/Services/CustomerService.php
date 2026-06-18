@@ -26,9 +26,7 @@ class CustomerService
                         ->orWhere('phonenumber', 'like', "%{$search}%");
                 });
             })
-            ->when($filters['id'] ?? null, fn ($q, $id) => $q->where(
-                fn ($q) => $q->where('id', $id)->orWhere('legacy_id', $id)
-            ))
+            ->when($filters['id'] ?? null, fn ($q, $id) => $q->where('id', $id))
             ->when($filters['status'] ?? null, fn ($q, $status) => $q->where('status', $status))
             ->when($filters['type'] ?? null, fn ($q, $type) => $q->where('type', $type))
             ->when($filters['expires_before'] ?? null, fn ($q, $date) => $q->where('expiration', '<=', $date))

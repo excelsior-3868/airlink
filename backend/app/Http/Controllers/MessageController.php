@@ -26,7 +26,7 @@ class MessageController extends Controller
         return Inertia::render('Messages/Index', [
             'messages' => $query->latest('id')->paginate(20)->withQueryString(),
             'box' => $box,
-            'unread' => Message::where('to_user', $me)->where('is_read', false)->count(),
+            'unread' => Message::where('to_user', $me)->where('status', '0')->count(),
         ]);
     }
 

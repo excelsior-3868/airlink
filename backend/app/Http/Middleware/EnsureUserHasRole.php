@@ -21,7 +21,16 @@ class EnsureUserHasRole
             abort(403);
         }
 
-        $allowed = array_map(fn (string $r) => UserRole::from($r), $roles);
+        $allowed = array_map(function (string $r) {
+            $mapped = match (strtolower($r)) {
+                'admin' => UserRole::Admin,
+                'sales' => UserRole::Sales,
+                'regular' => UserRole::Regular,
+                'pos' => UserRole::Pos,
+                default => null,
+            };
+            return $mapped ?? UserRole::from($r);
+        }, $roles);
 
         if ($roles !== [] && ! $user->hasRole(...$allowed)) {
             abort(403);

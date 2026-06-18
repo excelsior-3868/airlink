@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class CompanyWallet extends Model
 {
-    protected $table = 'company_wallet';
+    protected $table = 'walletCompany';
+
+    public $timestamps = false;
 
     protected $fillable = ['account_balance', 'balance_to_collect', 'last_loaded_date'];
 
