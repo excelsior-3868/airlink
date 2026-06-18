@@ -54,7 +54,7 @@ const NAV: NavGroup[] = [
         label: 'Customer',
         icon: CreditCard,
         match: '/customers',
-        roles: ['admin', 'sales'],
+        roles: ['admin', 'sales', 'pos'],
         items: [
             { label: 'Hotspot Users', path: '/customers', match: '/customers', exact: true },
             { label: 'PPPoE Users', path: '/customers/pppoe', match: '/customers/pppoe' },
@@ -75,9 +75,10 @@ const NAV: NavGroup[] = [
         label: 'Hotspot',
         icon: Wifi,
         match: '/vouchers',
-        roles: ['admin', 'sales'],
+        roles: ['admin', 'sales', 'pos'],
         items: [
             { label: 'Vouchers', path: '/vouchers', match: '/vouchers' },
+            { label: 'Voucher Allocation', path: '/vouchers/allocate', match: '/vouchers/allocate' },
         ],
     },
     {
@@ -102,7 +103,7 @@ const NAV: NavGroup[] = [
             { label: 'Auth Logs', path: '/monitor/logs', match: '/monitor/logs' },
         ],
     },
-    { label: 'Wallet', icon: Wallet, path: '/wallet', match: '/wallet', roles: ['admin'] },
+    { label: 'Wallet', icon: Wallet, path: '/wallet', match: '/wallet', roles: ['admin', 'sales', 'pos'] },
     {
         label: 'Reports',
         icon: FileBarChart,

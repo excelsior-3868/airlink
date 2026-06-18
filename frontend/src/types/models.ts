@@ -10,6 +10,7 @@ export interface Customer {
     status: string;
     expiration: string | null;
     generated_by: string | null; // POS Owner
+    generated_for: string | null;
     last_login_at: string | null;
     created_at: string;
 }

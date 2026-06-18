@@ -57,6 +57,75 @@ class VoucherApiController extends Controller
         ], 201);
     }
 
+    public function allocations(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $allocations = \DB::table('tbl_voucher AS t')
+            ->leftJoin('radacct AS r', function ($join) {
+                $join->on(\DB::raw('t.code COLLATE utf8mb4_unicode_ci'), '=', \DB::raw('r.username COLLATE utf8mb4_unicode_ci'));
+            })
+            ->select(
+                't.allocation',
+                \DB::raw('MIN(t.id) AS first_id'),
+                \DB::raw('MAX(t.id) AS last_id'),
+                \DB::raw('COUNT(distinct t.code) AS count'),
+                \DB::raw('COUNT(distinct r.username) AS matching_users')
+            )
+            ->where('t.allocation', '<>', '0')
+            ->whereNotNull('t.allocation')
+            ->where('t.allocation', '<>', '')
+            ->when(!$user->isAdmin(), fn ($q) => $q->where('t.generated_for', $user->username))
+            ->groupBy('t.allocation')
+            ->orderByDesc('matching_users')
+            ->get();
+
+        return response()->json($allocations);
+    }
+
+    public function allocate(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'vou_collector' => ['required', 'string', 'max:200'],
+            'id_start' => ['required', 'integer'],
+            'id_end' => ['required', 'integer', 'gte:id_start'],
+        ]);
+
+        $user = $request->user();
+        $padmin = $user->username;
+
+        // Fetch vouchers in range
+        $vouchers = Voucher::whereBetween('id', [$data['id_start'], $data['id_end']])->get();
+
+        if ($vouchers->isEmpty()) {
+            return response()->json([
+                'message' => 'No vouchers found in the specified range.'
+            ], 422);
+        }
+
+        // Check if any voucher doesn't belong to this user (if not admin)
+        foreach ($vouchers as $voucher) {
+            if (!$user->isAdmin() && $voucher->generated_for !== $padmin) {
+                return response()->json([
+                    'message' => 'You cannot allocate vouchers generated for other users.'
+                ], 403);
+            }
+            if ($voucher->allocation != '0' && !empty($voucher->allocation)) {
+                return response()->json([
+                    'message' => "Voucher ID {$voucher->id} is already allocated to {$voucher->allocation}."
+                ], 422);
+            }
+        }
+
+        // Update allocations
+        Voucher::whereBetween('id', [$data['id_start'], $data['id_end']])
+            ->update(['allocation' => $data['vou_collector']]);
+
+        return response()->json([
+            'message' => 'Vouchers allocated successfully.'
+        ]);
+    }
+
     public function destroy(Request $request, Voucher $voucher): JsonResponse
     {
         abort_unless($request->user()->hasRole(UserRole::Admin), 403);

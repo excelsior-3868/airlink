@@ -29,7 +29,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
         if (token && storedUser) {
             try {
-                setUser(JSON.parse(storedUser));
+                const parsed = JSON.parse(storedUser);
+                if (parsed && parsed.role) {
+                    parsed.role = parsed.role.toLowerCase();
+                }
+                setUser(parsed);
             } catch (e) {
                 localStorage.removeItem('airlink_user');
                 localStorage.removeItem('airlink_token');
@@ -41,6 +45,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const login = async (username: string, password: string) => {
         const response = await api.post('/login', { username, password });
         const { token, user: loggedInUser } = response.data;
+
+        if (loggedInUser && loggedInUser.role) {
+            loggedInUser.role = loggedInUser.role.toLowerCase();
+        }
 
         localStorage.setItem('airlink_token', token);
         localStorage.setItem('airlink_user', JSON.stringify(loggedInUser));

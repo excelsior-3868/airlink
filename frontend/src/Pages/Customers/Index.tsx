@@ -76,6 +76,10 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
     const [showRechargeModal, setShowRechargeModal] = useState(false);
     const [selectedPlanId, setSelectedPlanId] = useState<string>('');
 
+    // Change MAC Modal State
+    const [showMacModal, setShowMacModal] = useState(false);
+    const [macInput, setMacInput] = useState('');
+
     useEffect(() => {
         setSearchInput(searchQuery || searchId || '');
         setExpiresBefore(expiresBeforeQuery);
@@ -144,6 +148,52 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
             toast.error(err.response?.data?.message || 'Bulk recharge failed.');
         }
     });
+
+    const changeMacMutation = useMutation({
+        mutationFn: async (macAddress: string) => {
+            const customerId = selected[0];
+            const res = await api.post(`/customers/${customerId}/reset-mac`, {
+                mac_address: macAddress
+            });
+            return res.data;
+        },
+        onSuccess: (res) => {
+            toast.success(res.message || 'MAC address updated successfully.');
+            queryClient.invalidateQueries({ queryKey: ['customers'] });
+            setSelected([]);
+            setShowMacModal(false);
+            setMacInput('');
+        },
+        onError: (err: any) => {
+            toast.error(err.response?.data?.message || 'Failed to update MAC address.');
+        }
+    });
+
+    const submitMacChange: FormEventHandler = (e) => {
+        e.preventDefault();
+        if (!macInput) {
+            toast.error('Please enter a MAC address.');
+            return;
+        }
+        changeMacMutation.mutate(macInput);
+    };
+
+    const handleChangeMacClick = () => {
+        if (selected.length !== 1) {
+            toast.error('Select exactly one customer to change MAC.');
+            return;
+        }
+        setMacInput('');
+        setShowMacModal(true);
+    };
+
+    const handleChangePasswordClick = () => {
+        if (selected.length !== 1) {
+            toast.error('Select exactly one customer to change password.');
+            return;
+        }
+        navigate(`/customers/${selected[0]}/edit`);
+    };
 
     const submitSearch: FormEventHandler = (e) => {
         e.preventDefault();
@@ -216,7 +266,7 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
                         <Plus className="size-4" /> Add New
                     </Link>
                     <button
-                        onClick={() => notYet('Change Password')}
+                        onClick={handleChangePasswordClick}
                         className={cn(ACTION_BTN, 'bg-[#2f6fb0] hover:bg-[#285f99]')}
                     >
                         <Plus className="size-4" /> Change Password
@@ -249,7 +299,7 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
                         <Plus className="size-4" /> Recharge {selected.length > 1 ? `(${selected.length})` : ''}
                     </button>
                     <button
-                        onClick={() => notYet('Change MAC')}
+                        onClick={handleChangeMacClick}
                         className={cn(ACTION_BTN, 'bg-[#2e9e3f] hover:bg-[#268435]')}
                     >
                         <Plus className="size-4" /> Change MAC
@@ -439,6 +489,33 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
                             {bulkRechargeMutation.isPending ? 'Recharging...' : 'Confirm Bulk Recharge'}
                         </Button>
                     </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={showMacModal} onOpenChange={setShowMacModal}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Change MAC Address</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={submitMacChange} className="space-y-4 py-4">
+                        <div>
+                            <label className="text-sm font-medium block mb-2">New MAC Address</label>
+                            <Input
+                                placeholder="00:11:22:33:44:55"
+                                value={macInput}
+                                onChange={(e) => setMacInput(e.target.value)}
+                            />
+                        </div>
+                        <DialogFooter>
+                            <Button type="button" variant="outline" onClick={() => setShowMacModal(false)}>Cancel</Button>
+                            <Button 
+                                type="submit"
+                                disabled={!macInput || changeMacMutation.isPending}
+                            >
+                                {changeMacMutation.isPending ? 'Updating...' : 'Save MAC'}
+                            </Button>
+                        </DialogFooter>
+                    </form>
                 </DialogContent>
             </Dialog>
 

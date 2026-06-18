@@ -17,7 +17,11 @@ class CustomerResource extends JsonResource
             'profile' => $this->profile,
             'type' => $this->type,
             'status' => $this->status,
+            'address' => $this->address,
+            'generated_by' => $this->generated_by,
+            'generated_for' => $this->generated_for,
             'created_at' => $this->created_at,
+            'last_login' => $this->last_login,
         ];
     }
 }

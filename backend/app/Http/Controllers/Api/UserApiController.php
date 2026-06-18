@@ -11,6 +11,15 @@ use App\Enums\UserRole;
 
 class UserApiController extends Controller
 {
+    public function options(Request $request): JsonResponse
+    {
+        $users = User::query()
+            ->orderBy('username')
+            ->get(['username', 'fullname']);
+
+        return response()->json($users);
+    }
+
     public function index(Request $request): JsonResponse
     {
         $users = User::query()

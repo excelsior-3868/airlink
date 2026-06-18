@@ -21,6 +21,7 @@ import IpBindIndex from '@/Pages/IpBind/Index';
 import IpBindForm from '@/Pages/IpBind/Form';
 import VouchersIndex from '@/Pages/Vouchers/Index';
 import VouchersGenerate from '@/Pages/Vouchers/Generate';
+import VoucherAllocation from '@/Pages/Vouchers/Allocation';
 import MessagesIndex from '@/Pages/Messages/Index';
 import MessagesCreate from '@/Pages/Messages/Create';
 import MessagesShow from '@/Pages/Messages/Show';
@@ -53,8 +54,8 @@ export default function App() {
                         <Route path="/messages/:id" element={<MessagesShow />} />
                     </Route>
 
-                    {/* Sales & Admins */}
-                    <Route element={<ProtectedRoute allowedRoles={['admin', 'sales']} />}>
+                    {/* Admin, Sales & POS */}
+                    <Route element={<ProtectedRoute allowedRoles={['admin', 'sales', 'pos']} />}>
                         <Route path="/customers" element={<CustomersIndex type="hotspot" />} />
                         <Route path="/customers/pppoe" element={<CustomersIndex type="pppoe" />} />
                         <Route path="/customers/create" element={<CustomersCreate />} />
@@ -63,6 +64,12 @@ export default function App() {
                         <Route path="/customers/:id/recharge" element={<RechargeCreate />} />
                         <Route path="/vouchers" element={<VouchersIndex />} />
                         <Route path="/vouchers/generate" element={<VouchersGenerate />} />
+                        <Route path="/vouchers/allocate" element={<VoucherAllocation />} />
+                        <Route path="/wallet" element={<WalletIndex />} />
+                    </Route>
+
+                    {/* Sales & Admins Only */}
+                    <Route element={<ProtectedRoute allowedRoles={['admin', 'sales']} />}>
                         <Route path="/reports" element={<ReportsIndex />} />
                         <Route path="/reports/billings" element={<BillingsDashboard />} />
                     </Route>
@@ -86,7 +93,6 @@ export default function App() {
                         <Route path="/pools" element={<PoolsIndex />} />
                         <Route path="/pools/create" element={<PoolForm />} />
                         <Route path="/pools/:id/edit" element={<PoolForm />} />
-                        <Route path="/wallet" element={<WalletIndex />} />
                         <Route path="/monitor/sessions" element={<MonitorSessions />} />
                         <Route path="/monitor/logs" element={<MonitorLogs />} />
                         

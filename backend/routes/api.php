@@ -34,19 +34,27 @@ Route::name('api.')->prefix('v1')->group(function () {
         Route::get('messages/recipients', [MessageApiController::class, 'recipients']);
         Route::apiResource('messages', MessageApiController::class);
 
-        // Sales / Admins
-        Route::middleware('role:admin,sales')->group(function () {
+        // Sales / Admins / POS
+        Route::middleware('role:admin,sales,pos')->group(function () {
             Route::post('customers/bulk-action', [CustomerApiController::class, 'bulkAction']);
             Route::post('customers/{customer}/reset-mac', [CustomerApiController::class, 'resetMac']);
             Route::apiResource('customers', CustomerApiController::class);
 
             Route::get('vouchers/options', [VoucherApiController::class, 'options']);
+            Route::get('vouchers/allocations', [VoucherApiController::class, 'allocations']);
+            Route::post('vouchers/allocate', [VoucherApiController::class, 'allocate']);
             Route::apiResource('vouchers', VoucherApiController::class)->only(['index', 'store', 'destroy']);
 
             Route::get('recharge/plans', [RechargeApiController::class, 'plans']);
             Route::post('recharge/bulk', [RechargeApiController::class, 'bulkRecharge']);
             Route::post('customers/{customer}/recharge', [RechargeApiController::class, 'recharge']);
 
+            Route::get('wallet', [WalletApiController::class, 'index']);
+        });
+
+        // Sales / Admins Only
+        Route::middleware('role:admin,sales')->group(function () {
+            Route::get('users/options', [UserApiController::class, 'options']);
             Route::get('reports/billings', [ReportApiController::class, 'billings']);
             Route::get('reports', [ReportApiController::class, 'index']);
         });
@@ -66,7 +74,6 @@ Route::name('api.')->prefix('v1')->group(function () {
 
             Route::apiResource('ip-bindings', IpBindingApiController::class);
 
-            Route::get('wallet', [WalletApiController::class, 'index']);
             Route::post('wallet/load', [WalletApiController::class, 'load']);
 
             Route::get('monitor/sessions', [MonitorApiController::class, 'sessions']);

@@ -18,7 +18,14 @@ class CustomerApiController extends Controller
 
     public function index(Request $request): AnonymousResourceCollection
     {
-        $page = $this->customers->paginate($request->only('search', 'status', 'type', 'id', 'expires_before'), 25);
+        $filters = $request->only('search', 'status', 'type', 'id', 'expires_before');
+        $user = $request->user();
+
+        if ($user->hasRole(\App\Enums\UserRole::Pos)) {
+            $filters['generated_by'] = $user->username;
+        }
+
+        $page = $this->customers->paginate($filters, 25);
 
         return CustomerResource::collection($page);
     }
@@ -27,7 +34,15 @@ class CustomerApiController extends Controller
     {
         $this->authorize('create', Customer::class);
 
-        $customer = $this->customers->create($request->validated());
+        $data = $request->validated();
+        $user = $request->user();
+
+        $data['generated_by'] = $user->username;
+        if (empty($data['generated_for'])) {
+            $data['generated_for'] = $user->username;
+        }
+
+        $customer = $this->customers->create($data);
 
         return response()->json([
             'message' => 'Customer created.',

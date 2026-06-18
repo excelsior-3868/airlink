@@ -28,6 +28,7 @@ class UpdateCustomerRequest extends FormRequest
             'type' => ['nullable', 'in:Hotspot,PPPOE'],
             'profile' => ['nullable', 'string', 'max:100'],
             'status' => ['required', 'string', 'max:50'],
+            'generated_for' => ['nullable', 'string', 'max:200'],
         ];
     }
 }

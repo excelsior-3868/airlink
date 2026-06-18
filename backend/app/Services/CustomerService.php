@@ -30,6 +30,7 @@ class CustomerService
             ->when($filters['status'] ?? null, fn ($q, $status) => $q->where('status', $status))
             ->when($filters['type'] ?? null, fn ($q, $type) => $q->where('type', $type))
             ->when($filters['expires_before'] ?? null, fn ($q, $date) => $q->where('expiration', '<=', $date))
+            ->when($filters['generated_by'] ?? null, fn ($q, $gb) => $q->where('generated_by', $gb))
             ->latest('id')
             ->paginate($perPage)
             ->withQueryString();

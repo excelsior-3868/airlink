@@ -10,8 +10,10 @@ import {
 } from '@/components/ui/select';
 import InputError from '@/components/InputError';
 import { type Customer } from '@/types/models';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { FormEventHandler } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import api from '@/lib/api';
 
 type CustomerFormData = {
     username: string;
@@ -22,6 +24,7 @@ type CustomerFormData = {
     type: string;
     profile: string;
     status: string;
+    generated_for?: string;
 };
 
 interface CustomerFormProps {
@@ -44,7 +47,23 @@ export default function CustomerForm({
         type: customer?.type ?? 'Hotspot',
         profile: customer?.profile ?? '',
         status: customer?.status ?? 'activate',
+        generated_for: customer?.generated_for ?? '',
     });
+
+    const { user } = useAuth();
+    const [usersOptions, setUsersOptions] = useState<{ username: string; fullname: string }[]>([]);
+
+    useEffect(() => {
+        if (user && (user.role === 'admin' || user.role === 'sales')) {
+            api.get('/users/options')
+                .then((res) => {
+                    setUsersOptions(res.data);
+                })
+                .catch((err) => {
+                    console.error('Failed to load user options', err);
+                });
+        }
+    }, [user]);
 
     const [errors, setErrors] = useState<Record<string, string[]>>({});
 
@@ -172,6 +191,28 @@ export default function CustomerForm({
                     <InputError message={errors.status?.[0]} />
                 </div>
             </div>
+
+            {(user?.role === 'admin' || user?.role === 'sales') && (
+                <div className="grid gap-2">
+                    <Label htmlFor="generated_for">On Behalf Of</Label>
+                    <Select
+                        value={formData.generated_for || undefined}
+                        onValueChange={(v) => handleChange('generated_for', v)}
+                    >
+                        <SelectTrigger id="generated_for">
+                            <SelectValue placeholder="Select user (defaults to you)" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {usersOptions.map((opt) => (
+                                <SelectItem key={opt.username} value={opt.username}>
+                                    {opt.fullname ? `${opt.fullname} (${opt.username})` : opt.username}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <InputError message={errors.generated_for?.[0]} />
+                </div>
+            )}
 
             <div>
                 <Button type="submit" disabled={processing}>
