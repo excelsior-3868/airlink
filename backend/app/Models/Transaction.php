@@ -10,6 +10,10 @@ class Transaction extends Model
 
     public $timestamps = false;
 
+    protected $appends = [
+        'router_name',
+    ];
+
     protected $fillable = [
         'invoice', 'username', 'plan_name', 'price', 'recharged_on', 'expiration',
         'time', 'method', 'routers', 'router_name', 'type',

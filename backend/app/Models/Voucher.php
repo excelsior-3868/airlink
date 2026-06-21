@@ -11,6 +11,12 @@ class Voucher extends Model
 
     public $timestamps = false;
 
+    protected $appends = [
+        'router_name',
+        'plan_id',
+        'issued_on',
+    ];
+
     protected $fillable = [
         'type', 'routers', 'router_name', 'id_plan', 'plan_id', 'code', 'batch', 'user', 'status',
         'generated_by', 'generated_for', 'expired', 'allocation', 'created_date', 'issued_on', 'user_status',

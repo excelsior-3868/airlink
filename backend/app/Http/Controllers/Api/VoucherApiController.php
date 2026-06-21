@@ -63,7 +63,11 @@ class VoucherApiController extends Controller
 
         $allocations = \DB::table('tbl_voucher AS t')
             ->leftJoin('radacct AS r', function ($join) {
-                $join->on(\DB::raw('t.code COLLATE utf8mb4_unicode_ci'), '=', \DB::raw('r.username COLLATE utf8mb4_unicode_ci'));
+                if (\DB::getDriverName() === 'sqlite') {
+                    $join->on('t.code', '=', 'r.username');
+                } else {
+                    $join->on(\DB::raw('t.code COLLATE utf8mb4_unicode_ci'), '=', \DB::raw('r.username COLLATE utf8mb4_unicode_ci'));
+                }
             })
             ->select(
                 't.allocation',

@@ -11,6 +11,10 @@ class Bandwidth extends Model
 
     public $timestamps = false;
 
+    protected $appends = [
+        'name',
+    ];
+
     protected $fillable = [
         'name_bw', 'name', 'rate_down', 'rate_down_unit', 'rate_up', 'rate_up_unit',
     ];

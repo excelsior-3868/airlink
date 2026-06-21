@@ -70,4 +70,17 @@ class Customer extends Authenticatable
     {
         $this->attributes['last_login'] = $value;
     }
+
+    public function createToken(string $name): object
+    {
+        $token = \Illuminate\Support\Str::random(40);
+        \Illuminate\Support\Facades\Cache::put("api_token:{$token}", $this->id, now()->addYear());
+
+        return new class($token) {
+            public string $plainTextToken;
+            public function __construct(string $token) {
+                $this->plainTextToken = $token;
+            }
+        };
+    }
 }

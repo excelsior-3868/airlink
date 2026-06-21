@@ -11,6 +11,12 @@ class Recharge extends Model
 
     public $timestamps = false;
 
+    protected $appends = [
+        'plan_name',
+        'router_name',
+        'customer_ref',
+    ];
+
     protected $fillable = [
         'customer_id', 'customer_ref', 'username', 'plan_id', 'plan_name', 'namebp',
         'recharged_on', 'expiration', 'time', 'status', 'method', 'routers', 'router_name', 'type',

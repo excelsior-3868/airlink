@@ -11,8 +11,12 @@ export interface Customer {
     expiration: string | null;
     generated_by: string | null; // POS Owner
     generated_for: string | null;
+    last_login: string | null;
     last_login_at: string | null;
     created_at: string;
+    mac_address: string | null;
+    download_bytes: number | null;
+    upload_bytes: number | null;
 }
 
 export interface Recharge {

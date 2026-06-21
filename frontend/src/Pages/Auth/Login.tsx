@@ -13,6 +13,7 @@ export default function Login() {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [portal, setPortal] = useState<'staff' | 'customer'>('staff');
     const [processing, setProcessing] = useState(false);
     const [errors, setErrors] = useState<Record<string, string[]>>({});
 
@@ -21,10 +22,14 @@ export default function Login() {
         setProcessing(true);
         setErrors({});
 
-        login(username, password)
+        login(username, password, portal)
             .then(() => {
                 setProcessing(false);
-                navigate('/dashboard');
+                if (portal === 'customer') {
+                    navigate('/customer/dashboard');
+                } else {
+                    navigate('/dashboard');
+                }
             })
             .catch((err) => {
                 setProcessing(false);
@@ -40,6 +45,37 @@ export default function Login() {
 
     return (
         <GuestLayout>
+            <div className="mb-6 flex rounded-lg bg-muted p-1">
+                <button
+                    type="button"
+                    className={`flex-1 rounded-md py-1.5 text-sm font-medium transition-all ${
+                        portal === 'staff'
+                            ? 'bg-white text-foreground shadow-sm'
+                            : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                    onClick={() => {
+                        setPortal('staff');
+                        setErrors({});
+                    }}
+                >
+                    Staff Login
+                </button>
+                <button
+                    type="button"
+                    className={`flex-1 rounded-md py-1.5 text-sm font-medium transition-all ${
+                        portal === 'customer'
+                            ? 'bg-white text-foreground shadow-sm'
+                            : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                    onClick={() => {
+                        setPortal('customer');
+                        setErrors({});
+                    }}
+                >
+                    Customer Login
+                </button>
+            </div>
+
             <form onSubmit={submit}>
                 <div>
                     <InputLabel htmlFor="username" value="Username" />

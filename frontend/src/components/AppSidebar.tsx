@@ -30,6 +30,7 @@ import {
     Wallet,
     Wifi,
     Settings,
+    Ticket,
 } from 'lucide-react';
 
 interface NavItem {
@@ -56,8 +57,10 @@ const NAV: NavGroup[] = [
         match: '/customers',
         roles: ['admin', 'sales', 'pos'],
         items: [
-            { label: 'Hotspot Users', path: '/customers', match: '/customers', exact: true },
+            { label: 'User Details', path: '/customers', match: '/customers', exact: true },
+            { label: 'Search Details', path: '/customers/search', match: '/customers/search' },
             { label: 'PPPoE Users', path: '/customers/pppoe', match: '/customers/pppoe' },
+            { label: 'Billings', path: '/customers/billing', match: '/customers/billing' },
         ],
     },
     {
@@ -116,6 +119,15 @@ const NAV: NavGroup[] = [
     },
     { label: 'Messages', icon: Mail, path: '/messages', match: '/messages' },
     {
+        label: 'Tickets',
+        icon: Ticket,
+        match: '/tickets',
+        roles: ['admin', 'sales'],
+        items: [
+            { label: 'Complaints', path: '/tickets', match: '/tickets', exact: true },
+        ],
+    },
+    {
         label: 'Administration',
         icon: Settings,
         match: '/administration',
@@ -124,6 +136,8 @@ const NAV: NavGroup[] = [
             { label: 'System Users', path: '/administration/users', match: '/administration/users' },
             { label: 'General Settings', path: '/administration/settings', match: '/administration/settings' },
             { label: 'Backup / Restore', path: '/administration/backup', match: '/administration/backup' },
+            { label: 'CMS Categories', path: '/administration/cms/categories', match: '/administration/cms/categories' },
+            { label: 'CMS States', path: '/administration/cms/states', match: '/administration/cms/states' },
         ],
     },
 ];

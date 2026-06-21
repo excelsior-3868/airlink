@@ -18,7 +18,7 @@ class CustomerApiController extends Controller
 
     public function index(Request $request): AnonymousResourceCollection
     {
-        $filters = $request->only('search', 'status', 'type', 'id', 'expires_before');
+        $filters = $request->only('search', 'status', 'type', 'id', 'expires_before', 'expiry_range');
         $user = $request->user();
 
         if ($user->hasRole(\App\Enums\UserRole::Pos)) {

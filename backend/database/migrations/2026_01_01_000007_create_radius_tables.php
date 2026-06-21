@@ -13,7 +13,103 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::unprepared(<<<'SQL'
+        if (DB::getDriverName() === 'sqlite') {
+            DB::unprepared(<<<'SQL'
+CREATE TABLE IF NOT EXISTS `radcheck` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `attribute` varchar(64) NOT NULL DEFAULT '',
+  `op` char(2) NOT NULL DEFAULT ':=',
+  `value` varchar(253) NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS `radreply` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `attribute` varchar(64) NOT NULL DEFAULT '',
+  `op` char(2) NOT NULL DEFAULT '=',
+  `value` varchar(253) NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS `radusergroup` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `groupname` varchar(64) NOT NULL DEFAULT '',
+  `priority` int NOT NULL DEFAULT '1'
+);
+
+CREATE TABLE IF NOT EXISTS `radgroupcheck` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `groupname` varchar(64) NOT NULL DEFAULT '',
+  `attribute` varchar(64) NOT NULL DEFAULT '',
+  `op` char(2) NOT NULL DEFAULT '==',
+  `value` varchar(253) NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS `radgroupreply` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `groupname` varchar(64) NOT NULL DEFAULT '',
+  `attribute` varchar(64) NOT NULL DEFAULT '',
+  `op` char(2) NOT NULL DEFAULT '=',
+  `value` varchar(253) NOT NULL DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS `radacct` (
+  `radacctid` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `acctsessionid` varchar(64) NOT NULL DEFAULT '',
+  `acctuniqueid` varchar(32) NOT NULL DEFAULT '',
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `realm` varchar(64) DEFAULT '',
+  `nasipaddress` varchar(15) NOT NULL DEFAULT '',
+  `nasportid` varchar(32) DEFAULT NULL,
+  `nasporttype` varchar(32) DEFAULT NULL,
+  `acctstarttime` datetime DEFAULT NULL,
+  `acctupdatetime` datetime DEFAULT NULL,
+  `acctstoptime` datetime DEFAULT NULL,
+  `acctinterval` int DEFAULT NULL,
+  `acctsessiontime` int unsigned DEFAULT NULL,
+  `acctauthentic` varchar(32) DEFAULT NULL,
+  `connectinfo_start` varchar(128) DEFAULT NULL,
+  `connectinfo_stop` varchar(128) DEFAULT NULL,
+  `acctinputoctets` bigint DEFAULT NULL,
+  `acctoutputoctets` bigint DEFAULT NULL,
+  `calledstationid` varchar(50) NOT NULL DEFAULT '',
+  `callingstationid` varchar(50) NOT NULL DEFAULT '',
+  `acctterminatecause` varchar(32) NOT NULL DEFAULT '',
+  `servicetype` varchar(32) DEFAULT NULL,
+  `framedprotocol` varchar(32) DEFAULT NULL,
+  `framedipaddress` varchar(15) NOT NULL DEFAULT '',
+  `framedipv6address` varchar(45) NOT NULL DEFAULT '',
+  `framedipv6prefix` varchar(45) NOT NULL DEFAULT '',
+  `framedinterfaceid` varchar(44) NOT NULL DEFAULT '',
+  `delegatedipv6prefix` varchar(45) NOT NULL DEFAULT '',
+  `class` varchar(64) DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `radpostauth` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `pass` varchar(64) NOT NULL DEFAULT '',
+  `reply` varchar(32) NOT NULL DEFAULT '',
+  `authdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `class` varchar(64) DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `nas` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `nasname` varchar(128) NOT NULL,
+  `shortname` varchar(32) DEFAULT NULL,
+  `type` varchar(30) DEFAULT 'other',
+  `ports` int DEFAULT NULL,
+  `secret` varchar(60) NOT NULL DEFAULT 'secret',
+  `server` varchar(64) DEFAULT NULL,
+  `community` varchar(50) DEFAULT NULL,
+  `description` varchar(200) DEFAULT 'RADIUS Client'
+);
+SQL
+            );
+        } else {
+            DB::unprepared(<<<'SQL'
 CREATE TABLE IF NOT EXISTS `radcheck` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(64) NOT NULL DEFAULT '',
@@ -130,7 +226,9 @@ CREATE TABLE IF NOT EXISTS `nas` (
   PRIMARY KEY (`id`),
   KEY `nasname` (`nasname`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-SQL);
+SQL
+            );
+        }
     }
 
     public function down(): void

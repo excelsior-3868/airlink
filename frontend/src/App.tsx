@@ -4,6 +4,9 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import Login from '@/Pages/Auth/Login';
 import Dashboard from '@/Pages/Dashboard';
 import CustomersIndex from '@/Pages/Customers/Index';
+import CustomersSearch from '@/Pages/Customers/Search';
+import CustomersPPPoE from '@/Pages/Customers/PPPoE';
+import CustomersBilling from '@/Pages/Customers/Billing';
 import CustomersCreate from '@/Pages/Customers/Create';
 import CustomersShow from '@/Pages/Customers/Show';
 import CustomersEdit from '@/Pages/Customers/Edit';
@@ -34,6 +37,15 @@ import UsersIndex from '@/Pages/Administration/Users/Index';
 import UserForm from '@/Pages/Administration/Users/Form';
 import Settings from '@/Pages/Administration/Settings';
 import BackupRestore from '@/Pages/Administration/Backup';
+import CustomerDashboard from '@/Pages/CustomerPortal/Dashboard';
+import CustomerRecharge from '@/Pages/CustomerPortal/Recharge';
+import CustomerTickets from '@/Pages/CustomerPortal/Tickets';
+import CustomPage from '@/Pages/CustomerPortal/CustomPage';
+import TicketsIndex from '@/Pages/Tickets/Index';
+import TicketDetails from '@/Pages/Tickets/Details';
+import CMSCategories from '@/Pages/Administration/CMS/Categories';
+import CMSStates from '@/Pages/Administration/CMS/States';
+import Installer from '@/Pages/Installer/Index';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
@@ -45,7 +57,16 @@ export default function App() {
             <BrowserRouter>
                 <Routes>
                     <Route path="/login" element={<Login />} />
+                    <Route path="/install" element={<Installer />} />
                     
+                    {/* Customer Portal Routes (Protected) */}
+                    <Route element={<ProtectedRoute allowedRoles={['customer']} />}>
+                        <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+                        <Route path="/customer/recharge" element={<CustomerRecharge />} />
+                        <Route path="/customer/tickets" element={<CustomerTickets />} />
+                        <Route path="/pages/:slug" element={<CustomPage />} />
+                    </Route>
+
                     {/* All authenticated staff */}
                     <Route element={<ProtectedRoute />}>
                         <Route path="/dashboard" element={<Dashboard />} />
@@ -56,8 +77,10 @@ export default function App() {
 
                     {/* Admin, Sales & POS */}
                     <Route element={<ProtectedRoute allowedRoles={['admin', 'sales', 'pos']} />}>
-                        <Route path="/customers" element={<CustomersIndex type="hotspot" />} />
-                        <Route path="/customers/pppoe" element={<CustomersIndex type="pppoe" />} />
+                        <Route path="/customers" element={<CustomersIndex />} />
+                        <Route path="/customers/search" element={<CustomersSearch />} />
+                        <Route path="/customers/pppoe" element={<CustomersPPPoE />} />
+                        <Route path="/customers/billing" element={<CustomersBilling />} />
                         <Route path="/customers/create" element={<CustomersCreate />} />
                         <Route path="/customers/:id" element={<CustomersShow />} />
                         <Route path="/customers/:id/edit" element={<CustomersEdit />} />
@@ -68,10 +91,12 @@ export default function App() {
                         <Route path="/wallet" element={<WalletIndex />} />
                     </Route>
 
-                    {/* Sales & Admins Only */}
+                    {/* Sales & Admins Only (including tickets list & details) */}
                     <Route element={<ProtectedRoute allowedRoles={['admin', 'sales']} />}>
                         <Route path="/reports" element={<ReportsIndex />} />
                         <Route path="/reports/billings" element={<BillingsDashboard />} />
+                        <Route path="/tickets" element={<TicketsIndex />} />
+                        <Route path="/tickets/:id" element={<TicketDetails />} />
                     </Route>
 
                     {/* Admins only */}
@@ -102,6 +127,10 @@ export default function App() {
                         <Route path="/administration/users/:id/edit" element={<UserForm />} />
                         <Route path="/administration/settings" element={<Settings />} />
                         <Route path="/administration/backup" element={<BackupRestore />} />
+                        
+                        {/* CMS Settings */}
+                        <Route path="/administration/cms/categories" element={<CMSCategories />} />
+                        <Route path="/administration/cms/states" element={<CMSStates />} />
                     </Route>
 
                     <Route path="*" element={<Navigate to="/dashboard" replace />} />

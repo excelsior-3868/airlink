@@ -40,12 +40,13 @@ class WalletApiController extends Controller
         $balance = $wallet ? $wallet->available_balance : 0;
 
         // Hotspot sales count and sum
+        $collate = \DB::getDriverName() === 'sqlite' ? '' : 'COLLATE utf8mb4_unicode_ci';
         $hotspotQuery = \DB::selectOne("
             SELECT 
                 SUM(p.price) AS total_price, 
                 COUNT(DISTINCT c.username) AS matching_codes 
             FROM tbl_customers t 
-            LEFT JOIN radacct c ON t.username COLLATE utf8mb4_unicode_ci = c.username COLLATE utf8mb4_unicode_ci
+            LEFT JOIN radacct c ON t.username {$collate} = c.username {$collate}
             JOIN tbl_plans p ON t.profile = p.name_plan 
             WHERE t.generated_for = ?
         ", [$username]);

@@ -10,7 +10,131 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $sql = <<<SQL
+        if (DB::getDriverName() === 'sqlite') {
+            $sql = <<<SQL
+CREATE TABLE IF NOT EXISTS `admin` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `username` varchar(250) NOT NULL,
+  `password` varchar(250) NOT NULL,
+  `updationDate` varchar(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `backup_radacct` (
+  `radacctid` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `acctsessionid` varchar(64) NOT NULL DEFAULT '',
+  `acctuniqueid` varchar(32) NOT NULL DEFAULT '',
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `realm` varchar(64) DEFAULT '',
+  `nasipaddress` varchar(15) NOT NULL DEFAULT '',
+  `nasportid` varchar(32) DEFAULT NULL,
+  `nasporttype` varchar(32) DEFAULT NULL,
+  `acctstarttime` datetime DEFAULT NULL,
+  `acctupdatetime` datetime DEFAULT NULL,
+  `acctstoptime` datetime DEFAULT NULL,
+  `acctinterval` INTEGER DEFAULT NULL,
+  `acctsessiontime` INTEGER DEFAULT NULL,
+  `acctauthentic` varchar(32) DEFAULT NULL,
+  `connectinfo_start` varchar(128) DEFAULT NULL,
+  `connectinfo_stop` varchar(128) DEFAULT NULL,
+  `acctinputoctets` INTEGER DEFAULT NULL,
+  `acctoutputoctets` INTEGER DEFAULT NULL,
+  `calledstationid` varchar(50) NOT NULL DEFAULT '',
+  `callingstationid` varchar(50) NOT NULL DEFAULT '',
+  `acctterminatecause` varchar(32) NOT NULL DEFAULT '',
+  `servicetype` varchar(32) DEFAULT NULL,
+  `framedprotocol` varchar(32) DEFAULT NULL,
+  `framedipaddress` varchar(15) NOT NULL DEFAULT '',
+  `framedipv6address` varchar(45) NOT NULL DEFAULT '',
+  `framedipv6prefix` varchar(45) NOT NULL DEFAULT '',
+  `framedinterfaceid` varchar(44) NOT NULL DEFAULT '',
+  `delegatedipv6prefix` varchar(45) NOT NULL DEFAULT '',
+  `class` varchar(64) DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `batch_recharged` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `nas` varchar(200) NOT NULL,
+  `batch` varchar(200) NOT NULL,
+  `recharged_on` varchar(200) DEFAULT NULL,
+  `total_vouchers` INTEGER DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `category` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `categoryName` varchar(255) NOT NULL,
+  `categoryDescription` longtext NOT NULL,
+  `creationDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updationDate` timestamp NULL DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `complaintremark` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `complaintNumber` INTEGER NOT NULL,
+  `status` varchar(255) NOT NULL,
+  `remark` mediumtext NOT NULL,
+  `remarkDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `state` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `stateName` varchar(255) NOT NULL,
+  `stateDescription` tinytext NOT NULL,
+  `postingDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updationDate` timestamp NULL DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `subcategory` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `categoryid` INTEGER NOT NULL,
+  `subcategory` varchar(255) NOT NULL,
+  `creationDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updationDate` timestamp NULL DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `tblcomplaints` (
+  `complaintNumber` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `customerusername` varchar(45) NOT NULL,
+  `registeredBy` varchar(50) DEFAULT NULL,
+  `category` varchar(100) NOT NULL,
+  `subcategory` varchar(255) NOT NULL,
+  `complaintType` varchar(255) NOT NULL,
+  `state` varchar(255) NOT NULL,
+  `noc` varchar(255) NOT NULL,
+  `complaintDetails` mediumtext NOT NULL,
+  `complaintFile` varchar(255) DEFAULT NULL,
+  `regDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `status` varchar(50) DEFAULT NULL,
+  `lastUpdationDate` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `userlog` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `uid` INTEGER NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `userip` binary(16) NOT NULL,
+  `loginTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `logout` varchar(255) NOT NULL,
+  `status` INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `fullName` varchar(255) DEFAULT NULL,
+  `userEmail` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `contactNo` INTEGER DEFAULT NULL,
+  `address` tinytext DEFAULT NULL,
+  `State` varchar(255) DEFAULT NULL,
+  `country` varchar(255) DEFAULT NULL,
+  `pincode` INTEGER DEFAULT NULL,
+  `userImage` varchar(255) DEFAULT NULL,
+  `regDate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updationDate` timestamp NULL DEFAULT NULL,
+  `status` INTEGER NOT NULL
+);
+SQL;
+        } else {
+            $sql = <<<SQL
 CREATE TABLE IF NOT EXISTS `admin` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(250) NOT NULL,
@@ -159,6 +283,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 SQL;
+        }
 
         DB::unprepared($sql);
     }

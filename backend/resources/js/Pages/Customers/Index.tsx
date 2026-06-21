@@ -3,25 +3,22 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from '@/components/ui/table';
 import AppLayout from '@/Layouts/AppLayout';
-import { cn } from '@/lib/utils';
 import { type Customer } from '@/types/models';
 import { Head, Link, router } from '@inertiajs/react';
-import { Eye, Pencil, Plus, Search } from 'lucide-react';
+import {
+    Eye,
+    Pencil,
+    Plus,
+    Power,
+    PowerOff,
+    RefreshCw,
+    Search,
+    ShieldOff,
+    SmartphoneNfc,
+} from 'lucide-react';
 import { FormEventHandler, useState } from 'react';
 import { toast } from 'sonner';
-
-// Legacy "Manage Contact" action buttons, matched to the original colours.
-const ACTION_BTN =
-    'inline-flex items-center gap-1.5 rounded px-3 py-2 text-sm font-semibold text-white shadow-sm transition disabled:opacity-50';
 
 export default function CustomersIndex({
     customers,
@@ -82,39 +79,53 @@ export default function CustomersIndex({
             <Head title="Customers" />
 
             <div className="mx-auto max-w-7xl space-y-5">
-                {/* Action bar — mirrors legacy Manage Contact */}
-                <div className="flex flex-wrap gap-2">
-                    <Link
-                        href={route('customers.create')}
-                        className={cn(ACTION_BTN, 'bg-[#13366e] hover:bg-[#0f2a57]')}
-                    >
-                        <Plus className="size-4" /> Add New
-                    </Link>
-                    <button
+
+                {/* ── Action toolbar ───────────────────────── */}
+                <div className="flex flex-wrap items-center gap-2">
+                    <Button asChild size="sm">
+                        <Link href={route('customers.create')}>
+                            <Plus className="mr-1.5 size-3.5" /> Add New
+                        </Link>
+                    </Button>
+
+                    <Button
+                        size="sm"
+                        variant="secondary"
                         onClick={() => notYet('Change Password')}
-                        className={cn(ACTION_BTN, 'bg-[#2f6fb0] hover:bg-[#285f99]')}
                     >
-                        <Plus className="size-4" /> Change Password
-                    </button>
-                    <button
+                        <ShieldOff className="mr-1.5 size-3.5" /> Change Password
+                    </Button>
+
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
                         onClick={() => bulk('disable')}
-                        className={cn(ACTION_BTN, 'bg-[#e23b3b] hover:bg-[#c93030]')}
                     >
-                        <Plus className="size-4" /> Disable
-                    </button>
-                    <button
+                        <PowerOff className="mr-1.5 size-3.5" /> Disable
+                    </Button>
+
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-emerald-400/50 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-700"
                         onClick={() => bulk('activate')}
-                        className={cn(ACTION_BTN, 'bg-[#1aa3b8] hover:bg-[#158ca0]')}
                     >
-                        <Plus className="size-4" /> Activate
-                    </button>
-                    <button
+                        <Power className="mr-1.5 size-3.5" /> Activate
+                    </Button>
+
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
                         onClick={() => bulk('deactivate')}
-                        className={cn(ACTION_BTN, 'bg-[#e23b3b] hover:bg-[#c93030]')}
                     >
-                        <Plus className="size-4" /> Deactivate
-                    </button>
-                    <button
+                        <PowerOff className="mr-1.5 size-3.5" /> Deactivate
+                    </Button>
+
+                    <Button
+                        size="sm"
+                        variant="secondary"
                         onClick={() => {
                             if (selected.length !== 1) {
                                 toast.error('Select exactly one customer to recharge.');
@@ -122,151 +133,148 @@ export default function CustomersIndex({
                             }
                             router.visit(route('recharge.create', selected[0]));
                         }}
-                        className={cn(ACTION_BTN, 'bg-[#2f6fb0] hover:bg-[#285f99]')}
                     >
-                        <Plus className="size-4" /> Recharge
-                    </button>
-                    <button
+                        <RefreshCw className="mr-1.5 size-3.5" /> Recharge
+                    </Button>
+
+                    <Button
+                        size="sm"
+                        variant="secondary"
                         onClick={() => notYet('Change MAC')}
-                        className={cn(ACTION_BTN, 'bg-[#2e9e3f] hover:bg-[#268435]')}
                     >
-                        <Plus className="size-4" /> Change MAC
-                    </button>
+                        <SmartphoneNfc className="mr-1.5 size-3.5" /> Change MAC
+                    </Button>
                 </div>
 
-                {/* Search bar — Search + Search By ID */}
+                {/* ── Search bar ───────────────────────────── */}
                 <form onSubmit={submit} className="flex flex-wrap items-stretch gap-2">
-                    <span className="flex items-center rounded bg-[#13366e] px-3 text-white">
-                        <Search className="size-4" />
-                    </span>
-                    <Input
-                        placeholder="Search by Username..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="max-w-md flex-1"
-                    />
-                    <Button type="submit" className="bg-[#13366e] hover:bg-[#0f2a57]">
+                    <div className="relative flex-1 max-w-md">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                        <Input
+                            placeholder="Search by Username..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="pl-9"
+                        />
+                    </div>
+                    <Button type="submit" size="default">
                         Search
                     </Button>
                     <Button
                         type="button"
+                        size="default"
+                        variant="secondary"
                         onClick={searchById}
-                        className="bg-[#2f6fb0] hover:bg-[#285f99]"
                     >
                         Search By ID
                     </Button>
                 </form>
 
-                <Card>
-                    <CardContent className="pt-6">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-10">
-                                        <input
-                                            type="checkbox"
-                                            className="size-4 rounded border-input"
-                                            checked={
-                                                customers.data.length > 0 &&
-                                                selected.length ===
-                                                    customers.data.length
-                                            }
-                                            onChange={toggleAll}
-                                        />
-                                    </TableHead>
-                                    <TableHead className="w-12">S.N.</TableHead>
-                                    <TableHead>Username</TableHead>
-                                    <TableHead>Profile</TableHead>
-                                    <TableHead>Batch</TableHead>
-                                    <TableHead>Created_date</TableHead>
-                                    <TableHead>POS Owner</TableHead>
-                                    <TableHead className="text-right">
-                                        Actions
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {customers.data.length === 0 && (
-                                    <TableRow>
-                                        <TableCell
-                                            colSpan={8}
-                                            className="text-center text-muted-foreground"
-                                        >
-                                            No customers found.
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                                {customers.data.map((c, i) => (
-                                    <TableRow key={c.id}>
-                                        <TableCell>
+                {/* ── Table ────────────────────────────────── */}
+                <Card className="border-0 shadow-sm ring-1 ring-border/60">
+                    <CardContent className="p-0">
+                        <div className="overflow-x-auto">
+                            <table className="nt-table w-full text-sm">
+                                <thead>
+                                    <tr>
+                                        <th className="px-4 py-3 w-10">
                                             <input
                                                 type="checkbox"
-                                                className="size-4 rounded border-input"
-                                                checked={selected.includes(c.id)}
-                                                onChange={() => toggle(c.id)}
+                                                className="size-4 rounded border-white/40 cursor-pointer"
+                                                checked={
+                                                    customers.data.length > 0 &&
+                                                    selected.length === customers.data.length
+                                                }
+                                                onChange={toggleAll}
                                             />
-                                        </TableCell>
-                                        <TableCell className="text-muted-foreground">
-                                            {(customers.from ?? 0) + i}
-                                        </TableCell>
-                                        <TableCell className="font-medium">
-                                            {c.username}
-                                        </TableCell>
-                                        <TableCell>{c.profile}</TableCell>
-                                        <TableCell>
-                                            {c.batch && (
-                                                <Badge variant="outline">
-                                                    {c.batch}
-                                                </Badge>
-                                            )}
-                                        </TableCell>
-                                        <TableCell className="whitespace-nowrap text-sm text-muted-foreground">
-                                            {c.created_at
-                                                ?.replace('T', ' ')
-                                                .slice(0, 19)}
-                                        </TableCell>
-                                        <TableCell>{c.generated_by}</TableCell>
-                                        <TableCell className="flex justify-end gap-1">
-                                            <Button
-                                                asChild
-                                                size="icon"
-                                                variant="ghost"
+                                        </th>
+                                        <th className="px-4 py-3 text-left w-12">S.N.</th>
+                                        <th className="px-4 py-3 text-left">Username</th>
+                                        <th className="px-4 py-3 text-left">Profile</th>
+                                        <th className="px-4 py-3 text-left">Batch</th>
+                                        <th className="px-4 py-3 text-left">Created Date</th>
+                                        <th className="px-4 py-3 text-left">POS Owner</th>
+                                        <th className="px-4 py-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {customers.data.length === 0 && (
+                                        <tr>
+                                            <td
+                                                colSpan={8}
+                                                className="px-4 py-10 text-center text-muted-foreground"
                                             >
-                                                <Link
-                                                    href={route(
-                                                        'customers.show',
-                                                        c.id,
-                                                    )}
-                                                >
-                                                    <Eye className="size-4" />
-                                                </Link>
-                                            </Button>
-                                            <Button
-                                                asChild
-                                                size="icon"
-                                                variant="ghost"
-                                            >
-                                                <Link
-                                                    href={route(
-                                                        'customers.edit',
-                                                        c.id,
-                                                    )}
-                                                >
-                                                    <Pencil className="size-4" />
-                                                </Link>
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                                No customers found.
+                                            </td>
+                                        </tr>
+                                    )}
+                                    {customers.data.map((c, i) => (
+                                        <tr
+                                            key={c.id}
+                                            className="border-b border-border/50 hover:bg-muted/30 transition-colors"
+                                        >
+                                            <td className="px-4 py-3">
+                                                <input
+                                                    type="checkbox"
+                                                    className="size-4 rounded border-input cursor-pointer"
+                                                    checked={selected.includes(c.id)}
+                                                    onChange={() => toggle(c.id)}
+                                                />
+                                            </td>
+                                            <td className="px-4 py-3 text-xs text-muted-foreground">
+                                                {(customers.from ?? 0) + i}
+                                            </td>
+                                            <td className="px-4 py-3 font-medium">{c.username}</td>
+                                            <td className="px-4 py-3 text-muted-foreground">{c.profile}</td>
+                                            <td className="px-4 py-3">
+                                                {c.batch && (
+                                                    <Badge variant="outline" className="text-xs">
+                                                        {c.batch}
+                                                    </Badge>
+                                                )}
+                                            </td>
+                                            <td className="px-4 py-3 whitespace-nowrap text-xs text-muted-foreground">
+                                                {c.created_at?.replace('T', ' ').slice(0, 19)}
+                                            </td>
+                                            <td className="px-4 py-3 text-muted-foreground">{c.generated_by}</td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex items-center justify-end gap-1">
+                                                    <Button
+                                                        asChild
+                                                        size="icon"
+                                                        variant="ghost"
+                                                        className="size-8 hover:bg-primary/10 hover:text-primary"
+                                                    >
+                                                        <Link href={route('customers.show', c.id)}>
+                                                            <Eye className="size-3.5" />
+                                                        </Link>
+                                                    </Button>
+                                                    <Button
+                                                        asChild
+                                                        size="icon"
+                                                        variant="ghost"
+                                                        className="size-8 hover:bg-primary/10 hover:text-primary"
+                                                    >
+                                                        <Link href={route('customers.edit', c.id)}>
+                                                            <Pencil className="size-3.5" />
+                                                        </Link>
+                                                    </Button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
 
-                        <Pagination
-                            links={customers.links}
-                            from={customers.from}
-                            to={customers.to}
-                            total={customers.total}
-                        />
+                        <div className="px-4 py-3 border-t border-border/50">
+                            <Pagination
+                                links={customers.links}
+                                from={customers.from}
+                                to={customers.to}
+                                total={customers.total}
+                            />
+                        </div>
                     </CardContent>
                 </Card>
             </div>

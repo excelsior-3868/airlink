@@ -16,9 +16,15 @@ return new class extends Migration
             $table->string('username', 45)->default('')->unique();
             $table->string('fullname', 45)->default('');
             $table->mediumText('password');
-            $table->enum('user_type', ['Admin', 'Sales', 'Regular', 'POS'])->nullable();
-            $table->string('access_control', 10)->default('0');
-            $table->enum('status', ['Active', 'Inactive'])->default('Active');
+            if (\Illuminate\Support\Facades\DB::getDriverName() === 'sqlite') {
+                $table->string('user_type', 45)->nullable();
+                $table->string('access_control', 10)->default('0');
+                $table->string('status', 45)->default('Active');
+            } else {
+                $table->enum('user_type', ['Admin', 'Sales', 'Regular', 'POS'])->nullable();
+                $table->string('access_control', 10)->default('0');
+                $table->enum('status', ['Active', 'Inactive'])->default('Active');
+            }
             $table->dateTime('last_login')->nullable();
             $table->dateTime('creationdate')->useCurrent();
         });

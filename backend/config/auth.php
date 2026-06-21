@@ -48,6 +48,11 @@ return [
             'provider' => 'customers',
         ],
 
+        'customer-api' => [
+            'driver' => 'token-cache',
+            'provider' => 'customers',
+        ],
+
         'sanctum' => [
             'driver' => 'token-cache',
             'provider' => 'users',

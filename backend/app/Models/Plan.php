@@ -11,6 +11,13 @@ class Plan extends Model
 
     public $timestamps = false;
 
+    protected $appends = [
+        'name',
+        'bandwidth_id',
+        'bandwidth_policy',
+        'router_name',
+    ];
+
     protected $fillable = [
         'name_plan', 'name', 'id_bw', 'bandwidth_id', 'price', 'type', 'typebp', 'bandwidth_policy', 'limit_type',
         'time_limit', 'time_unit', 'data_limit', 'data_unit', 'validity', 'validity_unit',

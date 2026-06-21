@@ -251,9 +251,6 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
         }
     };
 
-    const notYet = (label: string) =>
-        toast.info(`${label} will be available once that module is built.`);
-
     return (
         <AppLayout title={type === 'pppoe' ? 'PPPoE Users' : 'Manage Customers'}>
             <div className="mx-auto max-w-7xl space-y-5">
@@ -370,7 +367,8 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
                                             <TableHead>Username</TableHead>
                                             <TableHead>Profile</TableHead>
                                             <TableHead>Batch</TableHead>
-                                            <TableHead>Expiration</TableHead>
+                                            <TableHead>Created Date</TableHead>
+                                            <TableHead>POS Owner</TableHead>
                                             <TableHead>Status</TableHead>
                                             <TableHead className="text-right">
                                                 Actions
@@ -381,7 +379,7 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
                                         {customersData.data.length === 0 && (
                                             <TableRow>
                                                 <TableCell
-                                                    colSpan={8}
+                                                    colSpan={9}
                                                     className="text-center text-muted-foreground"
                                                 >
                                                     No customers found.
@@ -413,7 +411,10 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
                                                     )}
                                                 </TableCell>
                                                 <TableCell className="whitespace-nowrap text-sm font-medium">
-                                                    {c.expiration ? c.expiration.slice(0, 10) : '—'}
+                                                    {c.created_at ? c.created_at.slice(0, 10) : '—'}
+                                                </TableCell>
+                                                <TableCell className="text-sm text-slate-700">
+                                                    {c.generated_by || '—'}
                                                 </TableCell>
                                                 <TableCell>
                                                     <Badge variant={c.status === 'active' ? 'default' : 'secondary'}>

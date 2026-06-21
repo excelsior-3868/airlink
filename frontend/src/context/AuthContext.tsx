@@ -11,7 +11,7 @@ interface User {
 interface AuthContextType {
     user: User | null;
     loading: boolean;
-    login: (username: string, password: string) => Promise<void>;
+    login: (username: string, password: string, portal?: 'staff' | 'customer') => Promise<void>;
     logout: () => Promise<void>;
     hasRole: (...roles: string[]) => boolean;
 }
@@ -42,22 +42,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
     }, []);
 
-    const login = async (username: string, password: string) => {
-        const response = await api.post('/login', { username, password });
-        const { token, user: loggedInUser } = response.data;
+    const login = async (username: string, password: string, portal: 'staff' | 'customer' = 'staff') => {
+        const endpoint = portal === 'customer' ? '/customer/login' : '/login';
+        const response = await api.post(endpoint, { username, password });
+        const { token, user: loggedInUser, customer: loggedInCustomer } = response.data;
 
-        if (loggedInUser && loggedInUser.role) {
-            loggedInUser.role = loggedInUser.role.toLowerCase();
+        const sessionUser = portal === 'customer' ? loggedInCustomer : loggedInUser;
+        if (sessionUser && sessionUser.role) {
+            sessionUser.role = sessionUser.role.toLowerCase();
         }
 
         localStorage.setItem('airlink_token', token);
-        localStorage.setItem('airlink_user', JSON.stringify(loggedInUser));
-        setUser(loggedInUser);
+        localStorage.setItem('airlink_user', JSON.stringify(sessionUser));
+        setUser(sessionUser);
     };
 
     const logout = async () => {
         try {
-            await api.post('/logout');
+            const endpoint = user?.role === 'customer' ? '/customer/logout' : '/logout';
+            await api.post(endpoint);
         } catch (e) {
             // Ignore error on logout request, still clear local session
         } finally {

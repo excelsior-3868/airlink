@@ -18,6 +18,11 @@ class CustomerService
      */
     public function paginate(array $filters = [], int $perPage = 20): LengthAwarePaginator
     {
+        $isSqlite = DB::getDriverName() === 'sqlite';
+        $expirySql = $isSqlite 
+            ? "CASE validity_unit WHEN 'h' THEN datetime(last_login, '+' || validity || ' hours') ELSE datetime(last_login, '+' || validity || ' days') END"
+            : "CASE validity_unit WHEN 'h' THEN DATE_ADD(last_login, INTERVAL validity HOUR) ELSE DATE_ADD(last_login, INTERVAL validity DAY) END";
+
         return Customer::query()
             ->when($filters['search'] ?? null, function ($q, $search) {
                 $q->where(function ($q) use ($search) {
@@ -29,7 +34,24 @@ class CustomerService
             ->when($filters['id'] ?? null, fn ($q, $id) => $q->where('id', $id))
             ->when($filters['status'] ?? null, fn ($q, $status) => $q->where('status', $status))
             ->when($filters['type'] ?? null, fn ($q, $type) => $q->where('type', $type))
-            ->when($filters['expires_before'] ?? null, fn ($q, $date) => $q->where('expiration', '<=', $date))
+            ->when($filters['expires_before'] ?? null, function ($q, $date) use ($expirySql) {
+                $dateTimeString = strlen($date) === 10 ? "{$date} 23:59:59" : $date;
+                $q->whereRaw("{$expirySql} <= ?", [$dateTimeString]);
+            })
+            ->when($filters['expiry_range'] ?? null, function ($q, $range) use ($expirySql) {
+                if ($range === 'all') {
+                    return;
+                }
+                if ($range === 'expired') {
+                    $q->whereRaw("{$expirySql} < ?", [now()->toDateTimeString()]);
+                } elseif (in_array((string)$range, ['1', '3', '7', '14', '30'], true)) {
+                    $days = (int)$range;
+                    $q->whereRaw("{$expirySql} >= ? AND {$expirySql} <= ?", [
+                        now()->toDateTimeString(),
+                        now()->addDays($days)->toDateTimeString()
+                    ]);
+                }
+            })
             ->when($filters['generated_by'] ?? null, fn ($q, $gb) => $q->where('generated_by', $gb))
             ->latest('id')
             ->paginate($perPage)

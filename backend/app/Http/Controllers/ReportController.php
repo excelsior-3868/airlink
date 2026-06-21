@@ -22,11 +22,11 @@ class ReportController extends Controller
         $username = $request->input('username');
 
         $base = Transaction::query()
-            ->whereBetween('recharged_on', [$from, $to])
+            ->whereBetween('recharged_on', [$from . ' 00:00:00', $to . ' 23:59:59'])
             ->when($type, fn ($q, $t) => $q->where('type', $t))
             ->when($username, fn ($q, $u) => $q->where('username', 'like', "%{$u}%"));
 
-        $total = (clone $base)->sum(DB::raw('CAST(price AS UNSIGNED)'));
+        $total = (clone $base)->sum('price');
         $count = (clone $base)->count();
 
         return Inertia::render('Reports/Index', [
