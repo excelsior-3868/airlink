@@ -24,8 +24,19 @@ import { cn } from '@/lib/utils';
 import { type Customer, type Plan } from '@/types/models';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import api from '@/lib/api';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Eye, Pencil, Plus, Search, Calendar as CalendarIcon } from 'lucide-react';
+import { formatADBS } from '@/utils/dateFormatter';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Pencil, Plus, MoreHorizontal, CreditCard, Network, KeyRound, ExternalLink, CheckCircle2, XCircle } from 'lucide-react';
+import { useRef } from 'react';
+import DatePicker from '@/components/ui/date-picker';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useState, useEffect } from 'react';
 import type { FormEventHandler } from 'react';
 import { toast } from 'sonner';
@@ -60,18 +71,18 @@ interface CustomersIndexProps {
 
 export default function CustomersIndex({ type }: CustomersIndexProps) {
     const queryClient = useQueryClient();
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const page = parseInt(searchParams.get('page') || '1', 10);
     const searchQuery = searchParams.get('search') || '';
-    const searchId = searchParams.get('id') || '';
+    const statusQuery = searchParams.get('status') || '';
     const expiresBeforeQuery = searchParams.get('expires_before') || '';
 
-    const [searchInput, setSearchInput] = useState(searchQuery || searchId || '');
+    const [searchInput, setSearchInput] = useState(searchQuery);
+    const [statusInput, setStatusInput] = useState(statusQuery);
     const [expiresBefore, setExpiresBefore] = useState(expiresBeforeQuery);
     const [selected, setSelected] = useState<number[]>([]);
-    
+
     // Bulk Recharge Modal State
     const [showRechargeModal, setShowRechargeModal] = useState(false);
     const [selectedPlanId, setSelectedPlanId] = useState<string>('');
@@ -81,19 +92,57 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
     const [macInput, setMacInput] = useState('');
 
     useEffect(() => {
-        setSearchInput(searchQuery || searchId || '');
+        setSearchInput(searchQuery);
+        setStatusInput(statusQuery);
         setExpiresBefore(expiresBeforeQuery);
-    }, [searchQuery, searchId, expiresBeforeQuery]);
+    }, [searchQuery, statusQuery, expiresBeforeQuery]);
+
+    // Debounce: fire search 400ms after the user stops typing
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const handleSearchInput = (val: string) => {
+        setSearchInput(val);
+        if (debounceRef.current) clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+            applyFilters({ search: val });
+        }, 400);
+    };
+
+    // Commit filters to URL — accepts overrides so instant-apply controls
+    // (Status, DatePicker) can pass their fresh value without waiting for state flush.
+    const applyFilters = (overrides: Record<string, string> = {}) => {
+        const base: Record<string, string> = {};
+        if (searchInput) base.search = searchInput;
+        if (statusInput) base.status = statusInput;
+        if (expiresBefore) base.expires_before = expiresBefore;
+        base.page = '1';
+        const next = { ...base, ...overrides };
+        // Strip keys set to empty string by overrides (e.g. clearing status)
+        const cleaned: Record<string, string> = {};
+        Object.entries(next).forEach(([k, v]) => { if (v) cleaned[k] = v; });
+        cleaned.page = '1';
+        setSearchParams(cleaned);
+    };
+
+    const triggerRowMacChange = (customerId: number) => {
+        setSelected([customerId]);
+        setMacInput('');
+        setShowMacModal(true);
+    };
+
+    const triggerRowAction = (action: 'activate' | 'deactivate' | 'disable', customerId: number) => {
+        bulkMutation.mutate({ action, ids: [customerId] });
+    };
+
 
     // Fetch Customers
     const { data: customersData, isLoading, isError } = useQuery<ApiPaginator<Customer>>({
-        queryKey: ['customers', page, searchQuery, searchId, type, expiresBeforeQuery],
+        queryKey: ['customers', page, searchQuery, statusQuery, type, expiresBeforeQuery],
         queryFn: async () => {
             const res = await api.get('/customers', {
                 params: {
                     page,
                     search: searchQuery || undefined,
-                    id: searchId || undefined,
+                    status: statusQuery || undefined,
                     type: type || undefined,
                     expires_before: expiresBeforeQuery || undefined,
                 },
@@ -178,37 +227,9 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
         changeMacMutation.mutate(macInput);
     };
 
-    const handleChangeMacClick = () => {
-        if (selected.length !== 1) {
-            toast.error('Select exactly one customer to change MAC.');
-            return;
-        }
-        setMacInput('');
-        setShowMacModal(true);
-    };
-
-    const handleChangePasswordClick = () => {
-        if (selected.length !== 1) {
-            toast.error('Select exactly one customer to change password.');
-            return;
-        }
-        navigate(`/customers/${selected[0]}/edit`);
-    };
-
     const submitSearch: FormEventHandler = (e) => {
         e.preventDefault();
-        setSearchParams({
-            search: searchInput,
-            expires_before: expiresBefore,
-            page: '1',
-        });
-    };
-
-    const submitSearchById = () => {
-        setSearchParams({
-            id: searchInput,
-            page: '1',
-        });
+        applyFilters();
     };
 
     const toggle = (id: number) =>
@@ -231,109 +252,58 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
         setSearchParams(newParams);
     };
 
-    const bulk = (action: 'activate' | 'deactivate' | 'disable') => {
-        if (selected.length === 0) {
-            toast.error('Select at least one customer first.');
-            return;
-        }
-        bulkMutation.mutate({ action, ids: selected });
-    };
-
-    const handleRechargeClick = () => {
-        if (selected.length === 0) {
-            toast.error('Select at least one customer to recharge.');
-            return;
-        }
-        if (selected.length === 1) {
-            navigate(`/customers/${selected[0]}/recharge`);
-        } else {
-            setShowRechargeModal(true);
-        }
-    };
 
     return (
-        <AppLayout title={type === 'pppoe' ? 'PPPoE Users' : 'Manage Customers'}>
+        <AppLayout title={type === 'pppoe' ? 'PPPoE Users' : 'User Details'}>
             <div className="mx-auto max-w-7xl space-y-5">
-                {/* Action bar — mirrors legacy Manage Contact */}
-                <div className="flex flex-wrap gap-2">
+                {/* Top bar: Add New + filters in one row */}
+                <form onSubmit={submitSearch} className="flex flex-wrap items-end gap-2">
+                    {/* Add New — leftmost */}
                     <Link
                         to="/customers/create"
-                        className={cn(ACTION_BTN, 'bg-[#13366e] hover:bg-[#0f2a57]')}
+                        className={cn(ACTION_BTN, 'bg-[#13366e] hover:bg-[#0f2a57] shrink-0')}
                     >
                         <Plus className="size-4" /> Add New
                     </Link>
-                    <button
-                        onClick={handleChangePasswordClick}
-                        className={cn(ACTION_BTN, 'bg-[#2f6fb0] hover:bg-[#285f99]')}
-                    >
-                        <Plus className="size-4" /> Change Password
-                    </button>
-                    <button
-                        onClick={() => bulk('disable')}
-                        disabled={bulkMutation.isPending}
-                        className={cn(ACTION_BTN, 'bg-[#e23b3b] hover:bg-[#c93030]')}
-                    >
-                        <Plus className="size-4" /> Disable
-                    </button>
-                    <button
-                        onClick={() => bulk('activate')}
-                        disabled={bulkMutation.isPending}
-                        className={cn(ACTION_BTN, 'bg-[#1aa3b8] hover:bg-[#158ca0]')}
-                    >
-                        <Plus className="size-4" /> Activate
-                    </button>
-                    <button
-                        onClick={() => bulk('deactivate')}
-                        disabled={bulkMutation.isPending}
-                        className={cn(ACTION_BTN, 'bg-[#e23b3b] hover:bg-[#c93030]')}
-                    >
-                        <Plus className="size-4" /> Deactivate
-                    </button>
-                    <button
-                        onClick={handleRechargeClick}
-                        className={cn(ACTION_BTN, 'bg-[#2f6fb0] hover:bg-[#285f99]')}
-                    >
-                        <Plus className="size-4" /> Recharge {selected.length > 1 ? `(${selected.length})` : ''}
-                    </button>
-                    <button
-                        onClick={handleChangeMacClick}
-                        className={cn(ACTION_BTN, 'bg-[#2e9e3f] hover:bg-[#268435]')}
-                    >
-                        <Plus className="size-4" /> Change MAC
-                    </button>
-                </div>
 
-                {/* Search bar */}
-                <form onSubmit={submitSearch} className="flex flex-wrap items-stretch gap-2">
-                    <span className="flex items-center rounded bg-[#13366e] px-3 text-white">
-                        <Search className="size-4" />
-                    </span>
+                    {/* Unified search — debounced 400ms */}
                     <Input
-                        placeholder="Search by Username..."
+                        placeholder="Search by Username, Profile, Batch, POS Owner..."
                         value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                        className="max-w-xs bg-background"
+                        onChange={(e) => handleSearchInput(e.target.value)}
+                        className="flex-1 min-w-[260px] bg-background"
                     />
-                    <div className="flex items-center bg-background border rounded-md px-2">
-                        <CalendarIcon className="size-4 text-muted-foreground mr-2" />
-                        <span className="text-sm text-muted-foreground whitespace-nowrap mr-2">Expires Before:</span>
-                        <input 
-                            type="date"
-                            value={expiresBefore}
-                            onChange={e => setExpiresBefore(e.target.value)}
-                            className="bg-transparent border-0 text-sm outline-none"
-                        />
-                    </div>
-                    <Button type="submit" className="bg-[#13366e] hover:bg-[#0f2a57]">
-                        Search
-                    </Button>
-                    <Button
-                        type="button"
-                        onClick={submitSearchById}
-                        className="bg-[#2f6fb0] hover:bg-[#285f99]"
+
+                    {/* Expires Before — Calendera (auto-apply on pick) */}
+                    <DatePicker
+                        value={expiresBefore}
+                        onChange={(v) => {
+                            setExpiresBefore(v);
+                            applyFilters({ expires_before: v });
+                        }}
+                        placeholder="Expires Before"
+                        className="min-w-[160px]"
+                    />
+
+                    {/* Status (auto-apply on select) */}
+                    <Select
+                        value={statusInput || 'all'}
+                        onValueChange={(v) => {
+                            const newStatus = v === 'all' ? '' : v;
+                            setStatusInput(newStatus);
+                            applyFilters({ status: newStatus });
+                        }}
                     >
-                        Search By ID
-                    </Button>
+                        <SelectTrigger className="w-32 bg-background">
+                            <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Status</SelectItem>
+                            <SelectItem value="activate">activate</SelectItem>
+                            <SelectItem value="deactivate">deactivate</SelectItem>
+                            <SelectItem value="disable">disable</SelectItem>
+                        </SelectContent>
+                    </Select>
                 </form>
 
                 <Card>
@@ -358,7 +328,7 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
                                                     checked={
                                                         customersData.data.length > 0 &&
                                                         selected.length ===
-                                                            customersData.data.length
+                                                        customersData.data.length
                                                     }
                                                     onChange={toggleAll}
                                                 />
@@ -411,37 +381,79 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
                                                     )}
                                                 </TableCell>
                                                 <TableCell className="whitespace-nowrap text-sm font-medium">
-                                                    {c.created_at ? c.created_at.slice(0, 10) : '—'}
+                                                    {c.created_at ? formatADBS(c.created_at, 'short') : '—'}
                                                 </TableCell>
                                                 <TableCell className="text-sm text-slate-700">
                                                     {c.generated_by || '—'}
                                                 </TableCell>
                                                 <TableCell>
-                                                    <Badge variant={c.status === 'active' ? 'default' : 'secondary'}>
+                                                    <Badge variant={c.status === 'activate' ? 'default' : 'secondary'}>
                                                         {c.status}
                                                     </Badge>
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    <div className="flex justify-end gap-1">
-                                                        <Button
-                                                            asChild
-                                                            size="icon"
-                                                            variant="ghost"
-                                                        >
-                                                            <Link to={`/customers/${c.id}`}>
-                                                                <Eye className="size-4" />
-                                                            </Link>
-                                                        </Button>
-                                                        <Button
-                                                            asChild
-                                                            size="icon"
-                                                            variant="ghost"
-                                                        >
-                                                            <Link to={`/customers/${c.id}/edit`}>
-                                                                <Pencil className="size-4" />
-                                                            </Link>
-                                                        </Button>
-                                                    </div>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800"
+                                                            >
+                                                                <MoreHorizontal className="size-4" />
+                                                                <span className="sr-only">Actions</span>
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="w-48">
+                                                            <DropdownMenuLabel className="text-xs font-semibold text-slate-500">Actions</DropdownMenuLabel>
+                                                            <DropdownMenuSeparator />
+                                                            <DropdownMenuItem asChild className="cursor-pointer">
+                                                                <Link to={`/customers/${c.id}`}>
+                                                                    <ExternalLink className="mr-2 size-4 text-slate-500" />
+                                                                    <span>View Details</span>
+                                                                </Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem asChild className="cursor-pointer">
+                                                                <Link to={`/customers/${c.id}/edit`}>
+                                                                    <Pencil className="mr-2 size-4 text-slate-500" />
+                                                                    <span>Edit Profile</span>
+                                                                </Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem asChild className="cursor-pointer">
+                                                                <Link to={`/customers/${c.id}/edit`}>
+                                                                    <KeyRound className="mr-2 size-4 text-slate-500" />
+                                                                    <span>Change Password</span>
+                                                                </Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem asChild className="cursor-pointer">
+                                                                <Link to={`/customers/${c.id}/recharge`}>
+                                                                    <CreditCard className="mr-2 size-4 text-slate-500" />
+                                                                    <span>Recharge</span>
+                                                                </Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem
+                                                                onClick={() => triggerRowMacChange(c.id)}
+                                                                className="cursor-pointer"
+                                                            >
+                                                                <Network className="mr-2 size-4 text-slate-500" />
+                                                                <span>Change MAC</span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuSeparator />
+                                                            <DropdownMenuItem
+                                                                onClick={() => triggerRowAction('activate', c.id)}
+                                                                className="cursor-pointer text-emerald-600 focus:text-emerald-700 focus:bg-emerald-50/50 dark:focus:bg-emerald-950/20"
+                                                            >
+                                                                <CheckCircle2 className="mr-2 size-4" />
+                                                                <span>Activate</span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem
+                                                                onClick={() => triggerRowAction('deactivate', c.id)}
+                                                                className="cursor-pointer text-amber-600 focus:text-amber-700 focus:bg-amber-50/50 dark:focus:bg-amber-950/20"
+                                                            >
+                                                                <XCircle className="mr-2 size-4" />
+                                                                <span>Deactivate</span>
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -483,8 +495,8 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
                     </div>
                     <DialogFooter>
                         <Button variant="outline" onClick={() => setShowRechargeModal(false)}>Cancel</Button>
-                        <Button 
-                            onClick={() => bulkRechargeMutation.mutate()} 
+                        <Button
+                            onClick={() => bulkRechargeMutation.mutate()}
                             disabled={!selectedPlanId || bulkRechargeMutation.isPending}
                         >
                             {bulkRechargeMutation.isPending ? 'Recharging...' : 'Confirm Bulk Recharge'}
@@ -509,7 +521,7 @@ export default function CustomersIndex({ type }: CustomersIndexProps) {
                         </div>
                         <DialogFooter>
                             <Button type="button" variant="outline" onClick={() => setShowMacModal(false)}>Cancel</Button>
-                            <Button 
+                            <Button
                                 type="submit"
                                 disabled={!macInput || changeMacMutation.isPending}
                             >

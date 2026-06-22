@@ -23,8 +23,16 @@ import { cn } from '@/lib/utils';
 import { type Customer, type Plan } from '@/types/models';
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import api from '@/lib/api';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Search, Users as UsersIcon, Hourglass } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Search, Users as UsersIcon, Hourglass, Eye, Pencil, MoreHorizontal, CreditCard, Network, KeyRound } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useState, useEffect } from 'react';
 import type { FormEventHandler } from 'react';
 import { toast } from 'sonner';
@@ -64,7 +72,6 @@ const TABS = [
 
 export default function CustomersPPPoE() {
     const queryClient = useQueryClient();
-    const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
 
     const page = parseInt(searchParams.get('page') || '1', 10);
@@ -86,6 +93,17 @@ export default function CustomersPPPoE() {
     useEffect(() => {
         setSearchInput(searchQuery || searchId || '');
     }, [searchQuery, searchId]);
+
+    const triggerRowMacChange = (customerId: number) => {
+        setSelected([customerId]);
+        setMacInput('');
+        setShowMacModal(true);
+    };
+
+    const triggerRowAction = (action: 'activate' | 'deactivate' | 'disable', customerId: number) => {
+        bulkMutation.mutate({ action, ids: [customerId] });
+    };
+
 
     // Fetch Customers (filtered by type=pppoe and activeTab range)
     const { data: customersData, isLoading, isError } = useQuery<ApiPaginator<Customer>>({
@@ -194,23 +212,6 @@ export default function CustomersPPPoE() {
         changeMacMutation.mutate(macInput);
     };
 
-    const handleChangeMacClick = () => {
-        if (selected.length !== 1) {
-            toast.error('Select exactly one customer to change MAC.');
-            return;
-        }
-        setMacInput('');
-        setShowMacModal(true);
-    };
-
-    const handleChangePasswordClick = () => {
-        if (selected.length !== 1) {
-            toast.error('Select exactly one customer to change password.');
-            return;
-        }
-        navigate(`/customers/${selected[0]}/edit`);
-    };
-
     const submitSearch: FormEventHandler = (e) => {
         e.preventDefault();
         setSearchParams({
@@ -256,26 +257,6 @@ export default function CustomersPPPoE() {
         setSearchParams(newParams);
     };
 
-    const bulk = (action: 'activate' | 'deactivate' | 'disable') => {
-        if (selected.length === 0) {
-            toast.error('Select at least one customer first.');
-            return;
-        }
-        bulkMutation.mutate({ action, ids: selected });
-    };
-
-    const handleRechargeClick = () => {
-        if (selected.length === 0) {
-            toast.error('Select at least one customer to recharge.');
-            return;
-        }
-        if (selected.length === 1) {
-            navigate(`/customers/${selected[0]}/recharge`);
-        } else {
-            setShowRechargeModal(true);
-        }
-    };
-
     const handleDelete = (id: number) => {
         if (window.confirm('Are you sure you want to delete this customer account?')) {
             deleteMutation.mutate(id);
@@ -285,53 +266,14 @@ export default function CustomersPPPoE() {
     return (
         <AppLayout title="PPPoE Users">
             <div className="mx-auto max-w-7xl space-y-5">
-                {/* Action bar — mirrors legacy Manage Contact */}
-                <div className="flex flex-wrap gap-2">
+                {/* Action bar — only Add New */}
+                <div className="flex">
                     <Link
                         to="/customers/create"
                         className={cn(ACTION_BTN, 'bg-[#13366e] hover:bg-[#0f2a57]')}
                     >
                         Add New
                     </Link>
-                    <button
-                        onClick={handleChangePasswordClick}
-                        className={cn(ACTION_BTN, 'bg-[#2f6fb0] hover:bg-[#285f99]')}
-                    >
-                        Change Password
-                    </button>
-                    <button
-                        onClick={() => bulk('disable')}
-                        disabled={bulkMutation.isPending}
-                        className={cn(ACTION_BTN, 'bg-[#e23b3b] hover:bg-[#c93030]')}
-                    >
-                        Disable
-                    </button>
-                    <button
-                        onClick={() => bulk('activate')}
-                        disabled={bulkMutation.isPending}
-                        className={cn(ACTION_BTN, 'bg-[#1aa3b8] hover:bg-[#158ca0]')}
-                    >
-                        Activate
-                    </button>
-                    <button
-                        onClick={() => bulk('deactivate')}
-                        disabled={bulkMutation.isPending}
-                        className={cn(ACTION_BTN, 'bg-[#e23b3b] hover:bg-[#c93030]')}
-                    >
-                        Deactivate
-                    </button>
-                    <button
-                        onClick={handleRechargeClick}
-                        className={cn(ACTION_BTN, 'bg-[#2f6fb0] hover:bg-[#285f99]')}
-                    >
-                        Recharge {selected.length > 1 ? `(${selected.length})` : ''}
-                    </button>
-                    <button
-                        onClick={handleChangeMacClick}
-                        className={cn(ACTION_BTN, 'bg-[#2e9e3f] hover:bg-[#268435]')}
-                    >
-                        Change MAC
-                    </button>
                 </div>
 
                 {/* Search bar */}
@@ -452,25 +394,79 @@ export default function CustomersPPPoE() {
                                                     {c.expiration ? c.expiration.slice(0, 19).replace('T', ' ') : 'N/A'}
                                                 </TableCell>
                                                 <TableCell className="text-right">
-                                                    <div className="flex justify-end gap-1.5">
-                                                        <Button
-                                                            asChild
-                                                            size="xs"
-                                                            variant="outline"
-                                                            className="text-indigo-600 border-indigo-200 hover:bg-indigo-50"
-                                                        >
-                                                            <Link to={`/customers/${c.id}/edit`}>
-                                                                Edit
-                                                            </Link>
-                                                        </Button>
-                                                        <Button
-                                                            size="xs"
-                                                            variant="destructive"
-                                                            onClick={() => handleDelete(c.id)}
-                                                        >
-                                                            Delete
-                                                        </Button>
-                                                    </div>
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                className="h-8 w-8 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800"
+                                                            >
+                                                                <MoreHorizontal className="size-4" />
+                                                                <span className="sr-only">Actions</span>
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end" className="w-48">
+                                                            <DropdownMenuLabel className="text-xs font-semibold text-slate-500">Actions</DropdownMenuLabel>
+                                                            <DropdownMenuSeparator />
+                                                            <DropdownMenuItem asChild className="cursor-pointer">
+                                                                <Link to={`/customers/${c.id}`}>
+                                                                    <Eye className="mr-2 size-4 text-slate-500" />
+                                                                    <span>View Details</span>
+                                                                </Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem asChild className="cursor-pointer">
+                                                                <Link to={`/customers/${c.id}/edit`}>
+                                                                    <Pencil className="mr-2 size-4 text-slate-500" />
+                                                                    <span>Edit Profile</span>
+                                                                </Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem asChild className="cursor-pointer">
+                                                                <Link to={`/customers/${c.id}/edit`}>
+                                                                    <KeyRound className="mr-2 size-4 text-slate-500" />
+                                                                    <span>Change Password</span>
+                                                                </Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem asChild className="cursor-pointer">
+                                                                <Link to={`/customers/${c.id}/recharge`}>
+                                                                    <CreditCard className="mr-2 size-4 text-slate-500" />
+                                                                    <span>Recharge</span>
+                                                                </Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem 
+                                                                onClick={() => triggerRowMacChange(c.id)}
+                                                                className="cursor-pointer"
+                                                            >
+                                                                <Network className="mr-2 size-4 text-slate-500" />
+                                                                <span>Change MAC</span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuSeparator />
+                                                            <DropdownMenuItem 
+                                                                onClick={() => triggerRowAction('activate', c.id)}
+                                                                className="cursor-pointer text-emerald-600 focus:text-emerald-700 focus:bg-emerald-50/50 dark:focus:bg-emerald-950/20"
+                                                            >
+                                                                <span>Activate</span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem 
+                                                                onClick={() => triggerRowAction('deactivate', c.id)}
+                                                                className="cursor-pointer text-amber-600 focus:text-amber-700 focus:bg-amber-50/50 dark:focus:bg-amber-950/20"
+                                                            >
+                                                                <span>Deactivate</span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem 
+                                                                onClick={() => triggerRowAction('disable', c.id)}
+                                                                className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/5"
+                                                            >
+                                                                <span>Disable</span>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuSeparator />
+                                                            <DropdownMenuItem 
+                                                                onClick={() => handleDelete(c.id)}
+                                                                className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/5 font-semibold"
+                                                            >
+                                                                <span>Delete Account</span>
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
                                                 </TableCell>
                                             </TableRow>
                                         ))}

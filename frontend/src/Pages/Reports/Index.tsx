@@ -20,6 +20,7 @@ import { Receipt } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import type { FormEventHandler } from 'react';
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import DatePicker from '@/components/ui/date-picker';
 
 const fmt = new Intl.NumberFormat();
 
@@ -129,20 +130,20 @@ export default function ReportsIndex() {
                         <form onSubmit={submit} className="mb-4 flex flex-wrap items-end gap-3">
                             <div className="grid gap-1">
                                 <Label htmlFor="from">From</Label>
-                                <Input
+                                <DatePicker
                                     id="from"
-                                    type="date"
                                     value={fromInput}
-                                    onChange={(e) => setFromInput(e.target.value)}
+                                    onChange={setFromInput}
+                                    placeholder="From date"
                                 />
                             </div>
                             <div className="grid gap-1">
                                 <Label htmlFor="to">To</Label>
-                                <Input
+                                <DatePicker
                                     id="to"
-                                    type="date"
                                     value={toInput}
-                                    onChange={(e) => setToInput(e.target.value)}
+                                    onChange={setToInput}
+                                    placeholder="To date"
                                 />
                             </div>
                             <div className="grid gap-1">

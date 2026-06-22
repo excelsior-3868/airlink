@@ -13,6 +13,7 @@
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
     --color-primary: var(--primary);
+    --color-primary-hover: var(--primary-hover);
     --color-primary-foreground: var(--primary-foreground);
     --color-secondary: var(--secondary);
     --color-secondary-foreground: var(--secondary-foreground);
@@ -42,63 +43,64 @@
 
 :root {
     --radius: 0.625rem;
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.985 0 0);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --background: hsl(0 0% 100%);
+    --foreground: hsl(222.2 84% 4.9%);
+    --card: hsl(0 0% 100%);
+    --card-foreground: hsl(222.2 84% 4.9%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(222.2 84% 4.9%);
+    --primary: hsl(211 100% 21%);
+    --primary-hover: hsl(211 100% 26%);
+    --primary-foreground: hsl(0 0% 98%);
+    --secondary: hsl(210 40% 96.1%);
+    --secondary-foreground: hsl(222.2 47.4% 11.2%);
+    --muted: hsl(210 40% 96.1%);
+    --muted-foreground: hsl(215.4 16.3% 46.9%);
+    --accent: hsl(211 100% 21%);
+    --accent-foreground: hsl(0 0% 98%);
+    --destructive: hsl(0 84.2% 60.2%);
+    --destructive-foreground: hsl(210 40% 98%);
+    --border: hsl(214.3 31.8% 91.4%);
+    --input: hsl(214.3 31.8% 91.4%);
+    --ring: hsl(211 100% 21%);
+    --sidebar: hsl(0 0% 98%);
+    --sidebar-foreground: hsl(222.2 84% 4.9%);
+    --sidebar-primary: hsl(211 100% 21%);
+    --sidebar-primary-foreground: hsl(0 0% 98%);
+    --sidebar-accent: hsl(211 100% 21% / 10%);
+    --sidebar-accent-foreground: hsl(211 100% 21%);
+    --sidebar-border: hsl(220 13% 91%);
+    --sidebar-ring: hsl(211 100% 21%);
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --destructive-foreground: oklch(0.985 0 0);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --background: hsl(224 71% 4%);
+    --foreground: hsl(213 31% 91%);
+    --card: hsl(224 71% 4%);
+    --card-foreground: hsl(213 31% 91%);
+    --popover: hsl(224 71% 4%);
+    --popover-foreground: hsl(213 31% 91%);
+    --primary: hsl(210 40% 98%);
+    --primary-foreground: hsl(222.2 47.4% 11.2%);
+    --secondary: hsl(222.2 47.4% 11.2%);
+    --secondary-foreground: hsl(210 40% 98%);
+    --muted: hsl(223 47% 11%);
+    --muted-foreground: hsl(215.4 16.3% 46.9%);
+    --accent: hsl(216 34% 17%);
+    --accent-foreground: hsl(210 40% 98%);
+    --destructive: hsl(0 63% 31%);
+    --destructive-foreground: hsl(210 40% 98%);
+    --border: hsl(216 34% 17%);
+    --input: hsl(216 34% 17%);
+    --ring: hsl(216 34% 17%);
+    --sidebar: hsl(224 71% 4%);
+    --sidebar-foreground: hsl(213 31% 91%);
+    --sidebar-primary: hsl(210 40% 98%);
+    --sidebar-primary-foreground: hsl(222.2 47.4% 11.2%);
+    --sidebar-accent: hsl(216 34% 17%);
+    --sidebar-accent-foreground: hsl(210 40% 98%);
+    --sidebar-border: hsl(216 34% 17%);
+    --sidebar-ring: hsl(216 34% 17%);
 }
 
 @layer base {
@@ -110,4 +112,143 @@
         background-color: var(--background);
         color: var(--foreground);
     }
+    thead, th {
+        background-color: hsl(211 100% 21%) !important;
+        color: white !important;
+        font-weight: 700 !important;
+    }
+    .dark thead, .dark th {
+        background-color: hsl(var(--card)) !important;
+        color: hsl(var(--foreground)) !important;
+    }
+}
+
+/* Brand Headers */
+.brand-header {
+    background-color: hsl(211 100% 21%);
+    color: white;
+}
+.dark .brand-header {
+    background-color: hsl(224 71% 4%) !important;
+    color: white !important;
+    border-bottom: 1px solid hsl(216 34% 17%) !important;
+}
+
+/* Glassmorphism */
+.glass-card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 16px -6px rgba(0, 0, 0, 0.03);
+}
+.dark .glass-card {
+    background: rgba(15, 23, 42, 0.65) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 12px 30px -5px rgba(0, 0, 0, 0.35), 0 8px 16px -6px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* Utility Overrides for Dark Mode */
+.dark .bg-white {
+    background-color: hsl(var(--card)) !important;
+}
+.dark .bg-slate-50 {
+    background-color: hsl(var(--background)) !important;
+}
+.dark .text-slate-800 {
+    color: hsl(var(--foreground)) !important;
+}
+.dark .text-slate-900 {
+    color: hsl(var(--foreground)) !important;
+}
+.dark .text-slate-600 {
+    color: hsl(var(--muted-foreground)) !important;
+}
+.dark .border-slate-200 {
+    border-color: hsl(var(--border)) !important;
+}
+.dark .border {
+    border-color: hsl(var(--border)) !important;
+}
+
+/* Custom scrollbar styling */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 30%);
+    border-radius: 3px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 50%);
+}
+
+/* Utility to hide scrollbars */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Forced Light Mode Wrapper Overrides */
+.forced-light {
+    --background: hsl(0 0% 100%);
+    --foreground: hsl(222.2 84% 4.9%);
+    --primary: hsl(211 100% 21%);
+    --primary-foreground: hsl(0 0% 98%);
+    --border: hsl(214.3 31.8% 91.4%);
+    --input: hsl(214.3 31.8% 91.4%);
+    --ring: hsl(211 100% 21%);
+    --muted: hsl(210 40% 96.1%);
+    --muted-foreground: hsl(215.4 16.3% 46.9%);
+}
+
+.forced-light .bg-white, .forced-light .bg-white\/90 {
+    background-color: white !important;
+    color: #0f172a !important;
+}
+
+.forced-light .btn-nt-primary {
+    background-color: hsl(211, 100%, 21%) !important;
+    color: white !important;
+    font-weight: 500 !important;
+    transition: none !important;
+}
+
+.forced-light .btn-nt-primary:hover {
+    background-color: hsl(211, 100%, 21%) !important;
+    opacity: 1 !important;
+}
+
+/* Sliding Gradient Background */
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.gradient-background {
+    --gradient-color-1: 211 100% 21%;
+    --gradient-color-2: 211 100% 26%;
+    --gradient-color-3: 210 50% 93%;
+    background: linear-gradient(-45deg,
+        hsl(var(--gradient-color-1)),
+        hsl(var(--gradient-color-2)),
+        hsl(var(--gradient-color-3)),
+        hsl(var(--gradient-color-2)));
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+/* Global width override to extend layout to full width */
+.max-w-7xl, .lg\:max-w-7xl {
+    max-width: 100% !important;
 }

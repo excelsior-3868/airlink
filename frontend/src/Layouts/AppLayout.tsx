@@ -1,81 +1,129 @@
-import { AppSidebar } from '@/components/AppSidebar';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Separator } from '@/components/ui/separator';
+import { CollapsibleAppSidebar } from '@/components/AppSidebar';
 import {
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
-import { useNavigate } from 'react-router-dom';
-import { ChevronDown, LogOut } from 'lucide-react';
-import type { PropsWithChildren, ReactNode } from 'react';
+import React, { type PropsWithChildren, type ReactNode, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { NAV, getColorClasses } from '@/components/AppSidebar';
+import { useLocation } from 'react-router-dom';
+import { useTheme } from 'next-themes';
+import { cn } from '@/lib/utils';
+import { Sun, Moon } from 'lucide-react';
+
+export function ThemeToggle({ className }: { className?: string }) {
+    const { theme, setTheme } = useTheme();
+    const isDark = theme === 'dark';
+
+    return (
+        <button
+            onClick={() => setTheme(isDark ? 'light' : 'dark')}
+            className={cn(
+                "relative size-9 rounded-md text-foreground hover:bg-accent active:scale-95 transition-all overflow-hidden cursor-pointer",
+                className
+            )}
+            title="Toggle theme"
+        >
+            <span className={cn(
+                "absolute inset-0 flex items-center justify-center transition-all duration-300",
+                isDark ? "opacity-100 rotate-0 scale-100" : "opacity-0 rotate-90 scale-50"
+            )}>
+                <Sun className="h-5 w-5 text-[#E6B646]" />
+            </span>
+            <span className={cn(
+                "absolute inset-0 flex items-center justify-center transition-all duration-300",
+                isDark ? "opacity-0 -rotate-90 scale-50" : "opacity-100 rotate-0 scale-100"
+            )}>
+                <Moon className="h-5 w-5 text-indigo-500" />
+            </span>
+        </button>
+    );
+}
+
+function AppLayoutContent({
+    title,
+    children,
+}: PropsWithChildren<{ title?: ReactNode }>) {
+    const { user } = useAuth();
+    const location = useLocation();
+
+    // Find active navigation item to extract label and icon
+    let activeIcon: React.ElementType | null = null;
+    let activeColor = 'slate';
+    let activeLabel = typeof title === 'string' ? title : '';
+
+    for (const group of NAV) {
+        if (group.path && (location.pathname === group.path || location.pathname.startsWith(group.path + '/'))) {
+            activeIcon = group.icon;
+            activeColor = group.color;
+            if (!activeLabel) activeLabel = group.label;
+        }
+        if (group.items) {
+            const subMatch = group.items.find(item => item.path && (location.pathname === item.path || location.pathname.startsWith(item.path + '/')));
+            if (subMatch) {
+                activeIcon = subMatch.icon || group.icon;
+                activeColor = group.color;
+                if (!activeLabel) activeLabel = subMatch.label;
+            }
+        }
+    }
+
+    if (!activeLabel && typeof title === 'string') {
+        activeLabel = title;
+    }
+
+    useEffect(() => {
+        if (activeLabel) {
+            document.title = `${activeLabel} | Nepal Airlink`;
+        } else {
+            document.title = 'Nepal Airlink';
+        }
+    }, [activeLabel]);
+
+    if (!user) return null;
+
+    return (
+        <div className="flex h-screen w-full overflow-hidden bg-slate-50 dark:bg-slate-950 text-foreground">
+            <CollapsibleAppSidebar />
+            <SidebarInset className="flex flex-col h-full overflow-hidden !bg-slate-50 dark:!bg-slate-950 text-foreground">
+                <main className="flex-1 p-4 sm:p-6 md:py-6 md:pr-6 md:pl-4 flex flex-col gap-6 overflow-y-auto no-scrollbar w-full">
+                    {(activeLabel || title) && (
+                        <div className="flex items-center justify-between border-b pb-4 border-slate-200 dark:border-slate-800">
+                            <div className="flex items-center gap-3">
+                                <SidebarTrigger className="-ml-1 md:hidden text-primary" />
+                                {activeIcon && (
+                                    <div className="flex size-6 items-center justify-center shrink-0">
+                                        {React.createElement(activeIcon, {
+                                            className: cn("size-6", getColorClasses(activeColor).icon)
+                                        })}
+                                    </div>
+                                )}
+                                <h1 className="text-2xl font-bold text-primary">
+                                    {activeLabel || title}
+                                </h1>
+                            </div>
+                        </div>
+                    )}
+                    <div className="flex-1 w-full">
+                        {children}
+                    </div>
+                </main>
+            </SidebarInset>
+        </div>
+    );
+}
 
 export default function AppLayout({
     title,
     children,
 }: PropsWithChildren<{ title?: ReactNode }>) {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
-
-    const handleLogout = async () => {
-        await logout();
-        navigate('/login');
-    };
-
-    if (!user) return null;
-
     return (
-        <SidebarProvider>
-            <AppSidebar />
-            <SidebarInset>
-                <header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 border-b bg-background px-4">
-                    <SidebarTrigger className="-ml-1" />
-                    <Separator orientation="vertical" className="mr-2 h-4" />
-                    <h1 className="text-base font-semibold">{title}</h1>
-
-                    <div className="ml-auto">
-                        <DropdownMenu>
-                            <DropdownMenuTrigger className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent">
-                                <div className="flex size-7 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                                    {user.name?.charAt(0).toUpperCase()}
-                                </div>
-                                <span className="hidden font-medium sm:inline">
-                                    {user.name}
-                                </span>
-                                <ChevronDown className="size-4 text-muted-foreground" />
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-48">
-                                <DropdownMenuLabel className="font-normal">
-                                    <div className="flex flex-col">
-                                        <span className="font-medium">
-                                            {user.name}
-                                        </span>
-                                        <span className="text-xs capitalize text-muted-foreground">
-                                            {user.role}
-                                        </span>
-                                    </div>
-                                </DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
-                                    <LogOut className="mr-2 size-4" />
-                                    Log out
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </header>
-
-                <main className="flex-1 p-4 sm:p-6">{children}</main>
-            </SidebarInset>
+        <SidebarProvider style={{ "--sidebar-width": "18rem" } as React.CSSProperties}>
+            <AppLayoutContent title={title}>
+                {children}
+            </AppLayoutContent>
             <Toaster richColors position="top-right" />
         </SidebarProvider>
     );

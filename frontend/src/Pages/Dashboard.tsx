@@ -152,55 +152,55 @@ export default function Dashboard() {
                     </div>
 
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                        <Card className="shadow-xs border bg-indigo-50/50">
-                            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-indigo-100">
-                                <CardTitle className="text-sm font-semibold text-indigo-950">Total Vouchers</CardTitle>
-                               <Ticket className="size-4 text-indigo-600" />
+                        <Card className="glass-card border border-slate-200/60 dark:border-slate-800/60 hover:scale-[1.01] transition-all duration-200">
+                            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-slate-100/80 dark:border-slate-800/50">
+                                <CardTitle className="text-sm font-bold text-slate-800 dark:text-slate-100">Total Vouchers</CardTitle>
+                               <Ticket className="size-4 text-indigo-600 dark:text-indigo-400" />
                             </CardHeader>
                             <CardContent className="pt-4">
-                                <div className="text-2xl font-bold text-indigo-950">{fmt.format(posStats.vouchersCount)}</div>
-                                <p className="text-xs text-indigo-700">assigned to you</p>
+                                <div className="text-2xl font-extrabold text-indigo-600 dark:text-indigo-400">{fmt.format(posStats.vouchersCount)}</div>
+                                <p className="text-xs text-muted-foreground">assigned to you</p>
                             </CardContent>
                         </Card>
 
-                        <Card className="shadow-xs border bg-emerald-50/50">
-                            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-emerald-100">
-                                <CardTitle className="text-sm font-semibold text-emerald-950">Used Vouchers</CardTitle>
-                                <Wifi className="size-4 text-emerald-600" />
+                        <Card className="glass-card border border-slate-200/60 dark:border-slate-800/60 hover:scale-[1.01] transition-all duration-200">
+                            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-slate-100/80 dark:border-slate-800/50">
+                                <CardTitle className="text-sm font-bold text-slate-800 dark:text-slate-100">Used Vouchers</CardTitle>
+                                <Wifi className="size-4 text-emerald-600 dark:text-emerald-400" />
                             </CardHeader>
                             <CardContent className="pt-4">
-                                <div className="text-2xl font-bold text-emerald-950">{fmt.format(posStats.usedVouchers)}</div>
-                                <p className="text-xs text-emerald-700">recharged successfully</p>
+                                <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">{fmt.format(posStats.usedVouchers)}</div>
+                                <p className="text-xs text-muted-foreground">recharged successfully</p>
                             </CardContent>
                         </Card>
 
-                        <Card className="shadow-xs border bg-sky-50/50">
-                            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-sky-100">
-                                <CardTitle className="text-sm font-semibold text-sky-950">Unused Vouchers</CardTitle>
-                                <CreditCard className="size-4 text-sky-600" />
+                        <Card className="glass-card border border-slate-200/60 dark:border-slate-800/60 hover:scale-[1.01] transition-all duration-200">
+                            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-slate-100/80 dark:border-slate-800/50">
+                                <CardTitle className="text-sm font-bold text-slate-800 dark:text-slate-100">Unused Vouchers</CardTitle>
+                                <CreditCard className="size-4 text-sky-600 dark:text-sky-400" />
                             </CardHeader>
                             <CardContent className="pt-4">
-                                <div className="text-2xl font-bold text-sky-950">
+                                <div className="text-2xl font-extrabold text-sky-600 dark:text-sky-400">
                                     {fmt.format(posStats.vouchersCount - posStats.usedVouchers)}
                                 </div>
-                                <p className="text-xs text-sky-700">available to sell</p>
+                                <p className="text-xs text-muted-foreground">available to sell</p>
                             </CardContent>
                         </Card>
 
-                        <Card className="shadow-xs border bg-amber-50/50">
-                            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-amber-100">
-                                <CardTitle className="text-sm font-semibold text-amber-950">PPPoE Accounts</CardTitle>
-                                <Users className="size-4 text-amber-600" />
+                        <Card className="glass-card border border-slate-200/60 dark:border-slate-800/60 hover:scale-[1.01] transition-all duration-200">
+                            <CardHeader className="flex flex-row items-center justify-between pb-2 border-b border-slate-100/80 dark:border-slate-800/50">
+                                <CardTitle className="text-sm font-bold text-slate-800 dark:text-slate-100">PPPoE Accounts</CardTitle>
+                                <Users className="size-4 text-amber-600 dark:text-amber-400" />
                             </CardHeader>
                             <CardContent className="pt-4">
-                                <div className="text-2xl font-bold text-amber-950">{fmt.format(posStats.userNoPpp)}</div>
-                                <p className="text-xs text-amber-700">total active recharges</p>
+                                <div className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">{fmt.format(posStats.userNoPpp)}</div>
+                                <p className="text-xs text-muted-foreground">total active recharges</p>
                             </CardContent>
                         </Card>
                     </div>
 
                     {/* Voucher Allocations Summary */}
-                    <Card className="shadow-sm border">
+                    <Card className="glass-card border border-slate-200/60 dark:border-slate-800/60">
                         <CardHeader className="flex flex-row items-center justify-between border-b bg-slate-50/80">
                             <div>
                                 <CardTitle className="text-sm font-bold text-slate-800">Allocated Voucher Batches</CardTitle>
@@ -213,38 +213,68 @@ export default function Dashboard() {
                             </Link>
                         </CardHeader>
                         <CardContent className="p-4">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Voucher Collector</TableHead>
-                                        <TableHead>Total Count</TableHead>
-                                        <TableHead>Used Vouchers</TableHead>
-                                        <TableHead>Unused Vouchers</TableHead>
-                                        <TableHead>ID Range</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {allocations.length === 0 ? (
-                                        <TableRow>
-                                            <TableCell colSpan={5} className="text-center text-slate-500 py-4">
-                                                No allocated voucher batches found.
-                                            </TableCell>
-                                        </TableRow>
-                                    ) : (
-                                        allocations.map((a, i) => (
-                                            <TableRow key={i}>
-                                                <TableCell className="font-semibold">{a.allocation}</TableCell>
-                                                <TableCell>{a.count}</TableCell>
-                                                <TableCell className="text-emerald-600 font-semibold">{a.matching_users}</TableCell>
-                                                <TableCell className="text-slate-600 font-semibold">{a.count - a.matching_users}</TableCell>
-                                                <TableCell className="font-mono text-xs text-slate-500">
-                                                    ID {a.first_id} - ID {a.last_id}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
-                                    )}
-                                </TableBody>
-                            </Table>
+                            {allocations.length === 0 ? (
+                                <div className="text-center text-slate-500 py-6 text-sm">
+                                    No allocated voucher batches found.
+                                </div>
+                            ) : (
+                                <>
+                                    {/* Desktop Table View */}
+                                    <div className="hidden md:block overflow-x-auto">
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow className="bg-slate-50">
+                                                    <TableHead className="font-bold text-slate-700">Voucher Collector</TableHead>
+                                                    <TableHead className="font-bold text-slate-700">Total Count</TableHead>
+                                                    <TableHead className="font-bold text-slate-700">Used Vouchers</TableHead>
+                                                    <TableHead className="font-bold text-slate-700">Unused Vouchers</TableHead>
+                                                    <TableHead className="font-bold text-slate-700">ID Range</TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {allocations.map((a, i) => (
+                                                    <TableRow key={i}>
+                                                        <TableCell className="font-semibold text-slate-700">{a.allocation}</TableCell>
+                                                        <TableCell>{a.count}</TableCell>
+                                                        <TableCell className="text-emerald-600 font-semibold">{a.matching_users}</TableCell>
+                                                        <TableCell className="text-slate-600 font-semibold">{a.count - a.matching_users}</TableCell>
+                                                        <TableCell className="font-mono text-xs text-slate-500">
+                                                            ID {a.first_id} - ID {a.last_id}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+
+                                    {/* Mobile Card View */}
+                                    <div className="md:hidden grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                        {allocations.map((a, i) => (
+                                            <div key={i} className="bg-white dark:bg-card border rounded-xl p-4 shadow-xs relative overflow-hidden flex flex-col justify-between gap-3 hover:shadow-sm transition-all">
+                                                <div className="flex items-center justify-between border-b pb-2 border-slate-100 dark:border-slate-800">
+                                                    <span className="font-bold text-slate-800 dark:text-slate-100">{a.allocation}</span>
+                                                    <Badge className="bg-blue-50 text-blue-700 border-blue-200 border rounded-full text-xs font-semibold px-2 py-0.5">
+                                                        {a.count} Total
+                                                    </Badge>
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-2 text-center text-xs">
+                                                    <div className="p-2 rounded-lg bg-emerald-500/5 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                                        <div className="font-bold">{a.matching_users}</div>
+                                                        <div className="text-[10px] text-muted-foreground font-medium">Used</div>
+                                                    </div>
+                                                    <div className="p-2 rounded-lg bg-amber-500/5 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                                        <div className="font-bold">{a.count - a.matching_users}</div>
+                                                        <div className="text-[10px] text-muted-foreground font-medium">Unused</div>
+                                                    </div>
+                                                </div>
+                                                <div className="text-[10px] text-muted-foreground border-t pt-2 border-slate-100 dark:border-slate-800 font-mono text-center">
+                                                    ID Range: ID {a.first_id} - ID {a.last_id}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
                         </CardContent>
                     </Card>
                 </div>
@@ -259,136 +289,117 @@ export default function Dashboard() {
                 
                 {/* Hotspot Row */}
                 <div className="space-y-2">
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">Hotspot Overview</h3>
+                    <h3 className="text-xs font-bold text-slate-400 pl-1">Hotspot Overview</h3>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                        <div className="rounded-xl overflow-hidden shadow-xs flex flex-col justify-between text-white h-32 bg-[#3c8dbc] hover:shadow-md transition-shadow">
-                            <div className="p-4 flex items-start justify-between">
-                                <div className="space-y-1">
-                                    <div className="text-xs font-bold uppercase tracking-wider text-sky-100">Total Voucher</div>
-                                    <div className="text-2xl font-extrabold">{stats ? fmt.format(stats.totalVouchers) : 0}</div>
-                                </div>
-                                <CreditCard className="size-8 text-sky-100/50" />
+                        <Link
+                            to="/vouchers"
+                            className="glass-card border border-slate-200/60 dark:border-slate-800/60 rounded-xl p-5 flex items-center justify-between h-28 hover:shadow-lg hover:scale-[1.02] active:scale-98 transition-all duration-200 group cursor-pointer"
+                        >
+                            <div className="space-y-1">
+                                <div className="text-xs font-bold text-muted-foreground">Total Voucher</div>
+                                <div className="text-2xl font-extrabold text-sky-600 dark:text-sky-400">{stats ? fmt.format(stats.totalVouchers) : 0}</div>
                             </div>
-                            <div className="bg-black/10 px-4 py-2 text-right">
-                                <Link to="/vouchers" className="text-[10px] font-extrabold uppercase text-sky-100 hover:text-white inline-flex items-center gap-1">
-                                    View Reports <ArrowRight className="size-3" />
-                                </Link>
+                            <div className="p-3 rounded-lg bg-sky-500/10 dark:bg-sky-500/20 text-sky-500 dark:text-sky-400 group-hover:scale-110 transition-transform duration-200">
+                                <CreditCard className="size-6" />
                             </div>
-                        </div>
+                        </Link>
 
-                        <div className="rounded-xl overflow-hidden shadow-xs flex flex-col justify-between text-white h-32 bg-[#fd8849] hover:shadow-md transition-shadow">
-                            <div className="p-4 flex items-start justify-between">
-                                <div className="space-y-1">
-                                    <div className="text-xs font-bold uppercase tracking-wider text-orange-100">Active Hotspot</div>
-                                    <div className="text-2xl font-extrabold">{stats ? fmt.format(stats.activeHotspot) : 0}</div>
-                                </div>
-                                <LockOpen className="size-8 text-orange-100/50" />
+                        <Link
+                            to="/vouchers"
+                            className="glass-card border border-slate-200/60 dark:border-slate-800/60 rounded-xl p-5 flex items-center justify-between h-28 hover:shadow-lg hover:scale-[1.02] active:scale-98 transition-all duration-200 group cursor-pointer"
+                        >
+                            <div className="space-y-1">
+                                <div className="text-xs font-bold text-muted-foreground">Active Hotspot</div>
+                                <div className="text-2xl font-extrabold text-orange-500 dark:text-orange-400">{stats ? fmt.format(stats.activeHotspot) : 0}</div>
                             </div>
-                            <div className="bg-black/10 px-4 py-2 text-right">
-                                <Link to="/vouchers" className="text-[10px] font-extrabold uppercase text-orange-100 hover:text-white inline-flex items-center gap-1">
-                                    View Reports <ArrowRight className="size-3" />
-                                </Link>
+                            <div className="p-3 rounded-lg bg-orange-500/10 dark:bg-orange-500/20 text-orange-500 dark:text-orange-400 group-hover:scale-110 transition-transform duration-200">
+                                <LockOpen className="size-6" />
                             </div>
-                        </div>
+                        </Link>
 
-                        <div className="rounded-xl overflow-hidden shadow-xs flex flex-col justify-between text-white h-32 bg-[#ff6b81] hover:shadow-md transition-shadow">
-                            <div className="p-4 flex items-start justify-between">
-                                <div className="space-y-1">
-                                    <div className="text-xs font-bold uppercase tracking-wider text-rose-100">Used/Expired Voucher</div>
-                                    <div className="text-2xl font-extrabold">{stats ? fmt.format(stats.usedExpiredVouchers) : 0}</div>
-                                </div>
-                                <Lock className="size-8 text-rose-100/50" />
+                        <Link
+                            to="/vouchers"
+                            className="glass-card border border-slate-200/60 dark:border-slate-800/60 rounded-xl p-5 flex items-center justify-between h-28 hover:shadow-lg hover:scale-[1.02] active:scale-98 transition-all duration-200 group cursor-pointer"
+                        >
+                            <div className="space-y-1">
+                                <div className="text-xs font-bold text-muted-foreground">Used/Expired Voucher</div>
+                                <div className="text-2xl font-extrabold text-rose-500 dark:text-rose-400">{stats ? fmt.format(stats.usedExpiredVouchers) : 0}</div>
                             </div>
-                            <div className="bg-black/10 px-4 py-2 text-right">
-                                <Link to="/vouchers" className="text-[10px] font-extrabold uppercase text-rose-100 hover:text-white inline-flex items-center gap-1">
-                                    View Reports <ArrowRight className="size-3" />
-                                </Link>
+                            <div className="p-3 rounded-lg bg-rose-500/10 dark:bg-rose-500/20 text-rose-500 dark:text-rose-400 group-hover:scale-110 transition-transform duration-200">
+                                <Lock className="size-6" />
                             </div>
-                        </div>
+                        </Link>
 
-                        <div className="rounded-xl overflow-hidden shadow-xs flex flex-col justify-between text-white h-32 bg-[#00d1b2] hover:shadow-md transition-shadow">
-                            <div className="p-4 flex items-start justify-between">
-                                <div className="space-y-1">
-                                    <div className="text-xs font-bold uppercase tracking-wider text-teal-100">Damaged/Returned Voucher</div>
-                                    <div className="text-2xl font-extrabold">{stats ? fmt.format(stats.damagedReturnedVouchers) : '0000'}</div>
-                                </div>
-                                <CreditCard className="size-8 text-teal-100/50" />
+                        <Link
+                            to="/vouchers"
+                            className="glass-card border border-slate-200/60 dark:border-slate-800/60 rounded-xl p-5 flex items-center justify-between h-28 hover:shadow-lg hover:scale-[1.02] active:scale-98 transition-all duration-200 group cursor-pointer"
+                        >
+                            <div className="space-y-1">
+                                <div className="text-xs font-bold text-muted-foreground">Damaged/Returned Voucher</div>
+                                <div className="text-2xl font-extrabold text-teal-500 dark:text-teal-400">{stats ? fmt.format(stats.damagedReturnedVouchers) : 0}</div>
                             </div>
-                            <div className="bg-black/10 px-4 py-2 text-right">
-                                <Link to="/vouchers" className="text-[10px] font-extrabold uppercase text-teal-100 hover:text-white inline-flex items-center gap-1">
-                                    View Reports <ArrowRight className="size-3" />
-                                </Link>
+                            <div className="p-3 rounded-lg bg-teal-500/10 dark:bg-teal-500/20 text-teal-500 dark:text-teal-400 group-hover:scale-110 transition-transform duration-200">
+                                <CreditCard className="size-6" />
                             </div>
-                        </div>
+                        </Link>
                     </div>
                 </div>
 
-                {/* Blue Separator Bar */}
-                <div className="h-1 bg-[#003164] w-full rounded-sm" />
-
                 {/* PPPoE Row */}
                 <div className="space-y-2">
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest pl-1">PPPoE Overview</h3>
+                    <h3 className="text-xs font-bold text-slate-400 pl-1">PPPoE Overview</h3>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                        <div className="rounded-xl overflow-hidden shadow-xs flex flex-col justify-between text-white h-32 bg-[#3c8dbc] hover:shadow-md transition-shadow">
-                            <div className="p-4 flex items-start justify-between">
-                                <div className="space-y-1">
-                                    <div className="text-xs font-bold uppercase tracking-wider text-sky-100">Total PPPOE Users</div>
-                                    <div className="text-2xl font-extrabold">{stats ? fmt.format(stats.totalPppoeUsers) : 0}</div>
-                                </div>
-                                <Users className="size-8 text-sky-100/50" />
+                        <Link
+                            to="/customers/pppoe"
+                            className="glass-card border border-slate-200/60 dark:border-slate-800/60 rounded-xl p-5 flex items-center justify-between h-28 hover:shadow-lg hover:scale-[1.02] active:scale-98 transition-all duration-200 group cursor-pointer"
+                        >
+                            <div className="space-y-1">
+                                <div className="text-xs font-bold text-muted-foreground">Total PPPoE Users</div>
+                                <div className="text-2xl font-extrabold text-sky-600 dark:text-sky-400">{stats ? fmt.format(stats.totalPppoeUsers) : 0}</div>
                             </div>
-                            <div className="bg-black/10 px-4 py-2 text-right">
-                                <Link to="/customers/pppoe" className="text-[10px] font-extrabold uppercase text-sky-100 hover:text-white inline-flex items-center gap-1">
-                                    View Reports <ArrowRight className="size-3" />
-                                </Link>
+                            <div className="p-3 rounded-lg bg-sky-500/10 dark:bg-sky-500/20 text-sky-500 dark:text-sky-400 group-hover:scale-110 transition-transform duration-200">
+                                <Users className="size-6" />
                             </div>
-                        </div>
+                        </Link>
 
-                        <div className="rounded-xl overflow-hidden shadow-xs flex flex-col justify-between text-white h-32 bg-[#fd8849] hover:shadow-md transition-shadow">
-                            <div className="p-4 flex items-start justify-between">
-                                <div className="space-y-1">
-                                    <div className="text-xs font-bold uppercase tracking-wider text-orange-100">Active PPPOE</div>
-                                    <div className="text-2xl font-extrabold">{stats ? fmt.format(stats.activePppoe) : 0}</div>
-                                </div>
-                                <Eye className="size-8 text-orange-100/50" />
+                        <Link
+                            to="/customers/pppoe"
+                            className="glass-card border border-slate-200/60 dark:border-slate-800/60 rounded-xl p-5 flex items-center justify-between h-28 hover:shadow-lg hover:scale-[1.02] active:scale-98 transition-all duration-200 group cursor-pointer"
+                        >
+                            <div className="space-y-1">
+                                <div className="text-xs font-bold text-muted-foreground">Active PPPoE</div>
+                                <div className="text-2xl font-extrabold text-orange-500 dark:text-orange-400">{stats ? fmt.format(stats.activePppoe) : 0}</div>
                             </div>
-                            <div className="bg-black/10 px-4 py-2 text-right">
-                                <Link to="/customers/pppoe" className="text-[10px] font-extrabold uppercase text-orange-100 hover:text-white inline-flex items-center gap-1">
-                                    View Reports <ArrowRight className="size-3" />
-                                </Link>
+                            <div className="p-3 rounded-lg bg-orange-500/10 dark:bg-orange-500/20 text-orange-500 dark:text-orange-400 group-hover:scale-110 transition-transform duration-200">
+                                <Eye className="size-6" />
                             </div>
-                        </div>
+                        </Link>
 
-                        <div className="rounded-xl overflow-hidden shadow-xs flex flex-col justify-between text-white h-32 bg-[#ff6b81] hover:shadow-md transition-shadow">
-                            <div className="p-4 flex items-start justify-between">
-                                <div className="space-y-1">
-                                    <div className="text-xs font-bold uppercase tracking-wider text-rose-100">Expired User</div>
-                                    <div className="text-2xl font-extrabold">{stats ? fmt.format(stats.expiredUsers) : '0000'}</div>
-                                </div>
-                                <Trash2 className="size-8 text-rose-100/50" />
+                        <Link
+                            to="/customers/pppoe?expiry_range=expired"
+                            className="glass-card border border-slate-200/60 dark:border-slate-800/60 rounded-xl p-5 flex items-center justify-between h-28 hover:shadow-lg hover:scale-[1.02] active:scale-98 transition-all duration-200 group cursor-pointer"
+                        >
+                            <div className="space-y-1">
+                                <div className="text-xs font-bold text-muted-foreground">Expired User</div>
+                                <div className="text-2xl font-extrabold text-rose-500 dark:text-rose-400">{stats ? fmt.format(stats.expiredUsers) : 0}</div>
                             </div>
-                            <div className="bg-black/10 px-4 py-2 text-right">
-                                <Link to="/customers/pppoe?expiry_range=expired" className="text-[10px] font-extrabold uppercase text-rose-100 hover:text-white inline-flex items-center gap-1">
-                                    View Reports <ArrowRight className="size-3" />
-                                </Link>
+                            <div className="p-3 rounded-lg bg-rose-500/10 dark:bg-rose-500/20 text-rose-500 dark:text-rose-400 group-hover:scale-110 transition-transform duration-200">
+                                <Trash2 className="size-6" />
                             </div>
-                        </div>
+                        </Link>
 
-                        <div className="rounded-xl overflow-hidden shadow-xs flex flex-col justify-between text-white h-32 bg-[#00d1b2] hover:shadow-md transition-shadow">
-                            <div className="p-4 flex items-start justify-between">
-                                <div className="space-y-1">
-                                    <div className="text-xs font-bold uppercase tracking-wider text-teal-100">Disabled User</div>
-                                    <div className="text-2xl font-extrabold">{stats ? fmt.format(stats.disabledUsers) : '0000'}</div>
-                                </div>
-                                <EyeOff className="size-8 text-teal-100/50" />
+                        <Link
+                            to="/customers?status=disable"
+                            className="glass-card border border-slate-200/60 dark:border-slate-800/60 rounded-xl p-5 flex items-center justify-between h-28 hover:shadow-lg hover:scale-[1.02] active:scale-98 transition-all duration-200 group cursor-pointer"
+                        >
+                            <div className="space-y-1">
+                                <div className="text-xs font-bold text-muted-foreground">Disabled User</div>
+                                <div className="text-2xl font-extrabold text-teal-500 dark:text-teal-400">{stats ? fmt.format(stats.disabledUsers) : 0}</div>
                             </div>
-                            <div className="bg-black/10 px-4 py-2 text-right">
-                                <Link to="/customers?status=disable" className="text-[10px] font-extrabold uppercase text-teal-100 hover:text-white inline-flex items-center gap-1">
-                                    View Reports <ArrowRight className="size-3" />
-                                </Link>
+                            <div className="p-3 rounded-lg bg-teal-500/10 dark:bg-teal-500/20 text-teal-500 dark:text-teal-400 group-hover:scale-110 transition-transform duration-200">
+                                <EyeOff className="size-6" />
                             </div>
-                        </div>
+                        </Link>
                     </div>
                 </div>
 
@@ -399,118 +410,185 @@ export default function Dashboard() {
                     <div className="lg:col-span-8 space-y-6">
                         
                         {/* POS USER Statistics Card */}
-                        <Card className="border shadow-xs">
-                            <CardHeader className="bg-gradient-to-r from-[#003164] to-[#004b96] text-white py-3.5 px-5 rounded-t-lg flex flex-row items-center justify-between">
-                                <CardTitle className="text-sm font-bold uppercase tracking-wider">POS User</CardTitle>
+                        <Card className="glass-card border border-slate-200/60 dark:border-slate-800/60">
+                            <CardHeader className="bg-gradient-to-r from-primary to-primary-hover text-white py-3.5 px-5 rounded-t-lg flex flex-row items-center justify-between">
+                                <CardTitle className="text-sm font-bold tracking-wide">POS User</CardTitle>
                                 <UserCheck className="size-4" />
                             </CardHeader>
-                            <CardContent className="p-4 overflow-x-auto">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow className="bg-slate-50">
-                                            <TableHead className="font-bold text-slate-700">Seller</TableHead>
-                                            <TableHead className="font-bold text-slate-700">Voucher</TableHead>
-                                            <TableHead className="font-bold text-slate-700">Used</TableHead>
-                                            <TableHead className="font-bold text-slate-700">Stock</TableHead>
-                                            <TableHead className="font-bold text-slate-700">Damage/Return</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {posUsers.length === 0 ? (
-                                            <TableRow>
-                                                <TableCell colSpan={5} className="text-center text-slate-500">
-                                                    No POS User voucher logs found.
-                                                </TableCell>
-                                            </TableRow>
-                                        ) : (
-                                            posUsers.map((u, i) => (
-                                                <TableRow key={i}>
-                                                    <TableCell className="font-semibold text-slate-700">{u.generated_for}</TableCell>
-                                                    <TableCell>
-                                                        <Badge className="bg-blue-50 text-blue-700 border-blue-200 border rounded-full px-2.5 py-0.5 hover:bg-blue-100">
-                                                            {u.total_generated_for}
+                            <CardContent className="p-4">
+                                {posUsers.length === 0 ? (
+                                    <div className="text-center text-slate-500 py-6 text-sm">
+                                        No POS User voucher logs found.
+                                    </div>
+                                ) : (
+                                    <>
+                                        {/* Desktop Table View */}
+                                        <div className="hidden md:block overflow-x-auto">
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow className="bg-slate-50">
+                                                        <TableHead className="font-bold text-slate-700">Seller</TableHead>
+                                                        <TableHead className="font-bold text-slate-700">Voucher</TableHead>
+                                                        <TableHead className="font-bold text-slate-700">Used</TableHead>
+                                                        <TableHead className="font-bold text-slate-700">Stock</TableHead>
+                                                        <TableHead className="font-bold text-slate-700">Damage/Return</TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {posUsers.map((u, i) => (
+                                                        <TableRow key={i}>
+                                                            <TableCell className="font-semibold text-slate-700">{u.generated_for}</TableCell>
+                                                            <TableCell>
+                                                                <Badge className="bg-blue-50 text-blue-700 border-blue-200 border rounded-full px-2.5 py-0.5 hover:bg-blue-100">
+                                                                    {u.total_generated_for}
+                                                                </Badge>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 border rounded-full px-2.5 py-0.5 hover:bg-emerald-100">
+                                                                    {u.matching_codes}
+                                                                </Badge>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Badge className="bg-amber-50 text-amber-700 border-amber-200 border rounded-full px-2.5 py-0.5 hover:bg-amber-100">
+                                                                    {u.total_generated_for - u.matching_codes - u.expired_codes}
+                                                                </Badge>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Badge className="bg-rose-50 text-rose-700 border-rose-200 border rounded-full px-2.5 py-0.5 hover:bg-rose-100">
+                                                                    {u.expired_codes}
+                                                                </Badge>
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+
+                                        {/* Mobile Card View */}
+                                        <div className="md:hidden grid gap-4 sm:grid-cols-2">
+                                            {posUsers.map((u, i) => (
+                                                <div key={i} className="bg-white dark:bg-card border rounded-xl p-4 shadow-xs relative overflow-hidden flex flex-col justify-between gap-3 hover:shadow-sm transition-all">
+                                                    <div className="flex items-center justify-between border-b pb-2 border-slate-100 dark:border-slate-800">
+                                                        <span className="font-bold text-slate-800 dark:text-slate-100">{u.generated_for}</span>
+                                                        <Badge className="bg-blue-50 text-blue-700 border-blue-200 border rounded-full text-xs font-semibold px-2 py-0.5">
+                                                            {u.total_generated_for} Vouchers
                                                         </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 border rounded-full px-2.5 py-0.5 hover:bg-emerald-100">
-                                                            {u.matching_codes}
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Badge className="bg-amber-50 text-amber-700 border-amber-200 border rounded-full px-2.5 py-0.5 hover:bg-amber-100">
-                                                            {u.total_generated_for - u.matching_codes - u.expired_codes}
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Badge className="bg-rose-50 text-rose-700 border-rose-200 border rounded-full px-2.5 py-0.5 hover:bg-rose-100">
-                                                            {u.expired_codes}
-                                                        </Badge>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))
-                                        )}
-                                    </TableBody>
-                                </Table>
+                                                    </div>
+                                                    <div className="grid grid-cols-3 gap-2 text-center text-xs">
+                                                        <div className="p-2 rounded-lg bg-emerald-500/5 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                                            <div className="font-bold">{u.matching_codes}</div>
+                                                            <div className="text-[10px] text-muted-foreground font-medium">Used</div>
+                                                        </div>
+                                                        <div className="p-2 rounded-lg bg-amber-500/5 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                                            <div className="font-bold">{u.total_generated_for - u.matching_codes - u.expired_codes}</div>
+                                                            <div className="text-[10px] text-muted-foreground font-medium">Stock</div>
+                                                        </div>
+                                                        <div className="p-2 rounded-lg bg-rose-500/5 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                                                            <div className="font-bold">{u.expired_codes}</div>
+                                                            <div className="text-[10px] text-muted-foreground font-medium">Damage</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
                             </CardContent>
                         </Card>
-
+ 
                         {/* Voucher Allocation Summary Card */}
-                        <Card className="border shadow-xs">
-                            <CardHeader className="bg-gradient-to-r from-[#003164] to-[#004b96] text-white py-3.5 px-5 rounded-t-lg flex flex-row items-center justify-between">
-                                <CardTitle className="text-sm font-bold uppercase tracking-wider">Voucher Allocation Summary</CardTitle>
-                                <Button asChild size="xs" className="bg-white text-[#003164] hover:bg-slate-100 font-extrabold uppercase text-[10px]">
+                        <Card className="glass-card border border-slate-200/60 dark:border-slate-800/60">
+                            <CardHeader className="bg-gradient-to-r from-primary to-primary-hover text-white py-3.5 px-5 rounded-t-lg flex flex-row items-center justify-between">
+                                <CardTitle className="text-sm font-bold tracking-wide">Voucher Allocation Summary</CardTitle>
+                                <Button asChild size="xs" className="bg-white text-primary hover:bg-slate-100 font-extrabold text-[10px]">
                                     <Link to="/vouchers/allocate">
                                         <Plus className="size-3 mr-1" /> Allocate Voucher
                                     </Link>
                                 </Button>
                             </CardHeader>
-                            <CardContent className="p-4 overflow-x-auto">
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow className="bg-slate-50">
-                                            <TableHead className="w-12 font-bold text-slate-700">S.N.</TableHead>
-                                            <TableHead className="font-bold text-slate-700">Voucher Collector</TableHead>
-                                            <TableHead className="font-bold text-slate-700">Total Voucher</TableHead>
-                                            <TableHead className="font-bold text-slate-700">Used Voucher</TableHead>
-                                            <TableHead className="font-bold text-slate-700">Unused Voucher</TableHead>
-                                            <TableHead className="font-bold text-slate-700">Id Start At</TableHead>
-                                            <TableHead className="font-bold text-slate-700">Id End At</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        {allocations.length === 0 ? (
-                                            <TableRow>
-                                                <TableCell colSpan={7} className="text-center text-slate-500">
-                                                    No allocated voucher summaries found.
-                                                </TableCell>
-                                            </TableRow>
-                                        ) : (
-                                            allocations.map((a, i) => (
-                                                <TableRow key={i}>
-                                                    <TableCell className="text-slate-500">{i + 1}</TableCell>
-                                                    <TableCell className="font-semibold text-slate-700">{a.allocation}</TableCell>
-                                                    <TableCell>
-                                                        <Badge className="bg-blue-50 text-blue-700 border-blue-200 border rounded-full px-2.5 py-0.5">
-                                                            {a.count}
+                            <CardContent className="p-4">
+                                {allocations.length === 0 ? (
+                                    <div className="text-center text-slate-500 py-6 text-sm">
+                                        No allocated voucher summaries found.
+                                    </div>
+                                ) : (
+                                    <>
+                                        {/* Desktop Table View */}
+                                        <div className="hidden md:block overflow-x-auto">
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow className="bg-slate-50">
+                                                        <TableHead className="w-12 font-bold text-slate-700">S.N.</TableHead>
+                                                        <TableHead className="font-bold text-slate-700">Voucher Collector</TableHead>
+                                                        <TableHead className="font-bold text-slate-700">Total Voucher</TableHead>
+                                                        <TableHead className="font-bold text-slate-700">Used Voucher</TableHead>
+                                                        <TableHead className="font-bold text-slate-700">Unused Voucher</TableHead>
+                                                        <TableHead className="font-bold text-slate-700">ID Start At</TableHead>
+                                                        <TableHead className="font-bold text-slate-700">ID End At</TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {allocations.map((a, i) => (
+                                                        <TableRow key={i}>
+                                                            <TableCell className="text-slate-500">{i + 1}</TableCell>
+                                                            <TableCell className="font-semibold text-slate-700">{a.allocation}</TableCell>
+                                                            <TableCell>
+                                                                <Badge className="bg-blue-50 text-blue-700 border-blue-200 border rounded-full px-2.5 py-0.5">
+                                                                    {a.count}
+                                                                </Badge>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 border rounded-full px-2.5 py-0.5">
+                                                                    {a.matching_users}
+                                                                </Badge>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Badge className="bg-amber-50 text-amber-700 border-amber-200 border rounded-full px-2.5 py-0.5">
+                                                                    {a.count - a.matching_users}
+                                                                </Badge>
+                                                            </TableCell>
+                                                            <TableCell className="font-mono text-xs">{a.first_id}</TableCell>
+                                                            <TableCell className="font-mono text-xs">{a.last_id}</TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+
+                                        {/* Mobile Card View */}
+                                        <div className="md:hidden grid gap-4 sm:grid-cols-2">
+                                            {allocations.map((a, i) => (
+                                                <div key={i} className="bg-white dark:bg-card border rounded-xl p-4 shadow-xs relative overflow-hidden flex flex-col justify-between gap-3 hover:shadow-sm transition-all">
+                                                    <div className="flex items-center justify-between border-b pb-2 border-slate-100 dark:border-slate-800">
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-xs font-bold text-muted-foreground bg-slate-100 dark:bg-slate-850 px-1.5 py-0.5 rounded">
+                                                                #{i + 1}
+                                                            </span>
+                                                            <span className="font-bold text-slate-800 dark:text-slate-100">{a.allocation}</span>
+                                                        </div>
+                                                        <Badge className="bg-blue-50 text-blue-700 border-blue-200 border rounded-full text-xs font-semibold px-2 py-0.5">
+                                                            {a.count} Total
                                                         </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 border rounded-full px-2.5 py-0.5">
-                                                            {a.matching_users}
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <Badge className="bg-amber-50 text-amber-700 border-amber-200 border rounded-full px-2.5 py-0.5">
-                                                            {a.count - a.matching_users}
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell className="font-mono text-xs">{a.first_id}</TableCell>
-                                                    <TableCell className="font-mono text-xs">{a.last_id}</TableCell>
-                                                </TableRow>
-                                            ))
-                                        )}
-                                    </TableBody>
-                                </Table>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-2 text-center text-xs">
+                                                        <div className="p-2 rounded-lg bg-emerald-500/5 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                                                            <div className="font-bold">{a.matching_users}</div>
+                                                            <div className="text-[10px] text-muted-foreground font-medium">Used</div>
+                                                        </div>
+                                                        <div className="p-2 rounded-lg bg-amber-500/5 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                                                            <div className="font-bold">{a.count - a.matching_users}</div>
+                                                            <div className="text-[10px] text-muted-foreground font-medium">Unused</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex justify-between items-center text-[10px] text-muted-foreground border-t pt-2 border-slate-100 dark:border-slate-800 font-mono">
+                                                        <span>Start ID: {a.first_id}</span>
+                                                        <span>End ID: {a.last_id}</span>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
                             </CardContent>
                         </Card>
 
@@ -518,7 +596,7 @@ export default function Dashboard() {
 
                     {/* Right column: Activity Log */}
                     <div className="lg:col-span-4">
-                        <Card className="border shadow-xs h-full">
+                        <Card className="glass-card border border-slate-200/60 dark:border-slate-800/60 h-full">
                             <CardHeader className="border-b py-3 px-5 bg-slate-50/50 flex flex-row items-center justify-between">
                                 <CardTitle className="text-sm font-bold text-slate-800">Activity Log</CardTitle>
                                 <Clock className="size-4 text-slate-400" />

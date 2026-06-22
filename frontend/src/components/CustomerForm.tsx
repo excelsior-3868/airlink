@@ -183,9 +183,9 @@ export default function CustomerForm({
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="activate">Active</SelectItem>
-                            <SelectItem value="deactivate">Inactive</SelectItem>
-                            <SelectItem value="disabled">Disabled</SelectItem>
+                            <SelectItem value="activate">activate</SelectItem>
+                            <SelectItem value="deactivate">deactivate</SelectItem>
+                            <SelectItem value="disable">disable</SelectItem>
                         </SelectContent>
                     </Select>
                     <InputError message={errors.status?.[0]} />

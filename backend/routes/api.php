@@ -59,7 +59,11 @@ Route::name('api.')->prefix('v1')->group(function () {
         // Customer Tickets
         Route::get('customer/categories', CMSCategoryController::class . '@index');
         Route::get('customer/states', CMSStateController::class . '@index');
-        Route::apiResource('customer/complaints', ComplaintApiController::class)->only(['index', 'store', 'show']);
+        Route::apiResource('customer/complaints', ComplaintApiController::class)->only(['index', 'store', 'show'])->names([
+            'index' => 'customer.complaints.index',
+            'store' => 'customer.complaints.store',
+            'show' => 'customer.complaints.show',
+        ]);
         Route::post('customer/complaints/{complaint}/remarks', [ComplaintRemarkApiController::class, 'store']);
     });
 

@@ -4,7 +4,6 @@ import { ProtectedRoute } from '@/components/ProtectedRoute';
 import Login from '@/Pages/Auth/Login';
 import Dashboard from '@/Pages/Dashboard';
 import CustomersIndex from '@/Pages/Customers/Index';
-import CustomersSearch from '@/Pages/Customers/Search';
 import CustomersPPPoE from '@/Pages/Customers/PPPoE';
 import CustomersBilling from '@/Pages/Customers/Billing';
 import CustomersCreate from '@/Pages/Customers/Create';
@@ -47,96 +46,98 @@ import CMSCategories from '@/Pages/Administration/CMS/Categories';
 import CMSStates from '@/Pages/Administration/CMS/States';
 import Installer from '@/Pages/Installer/Index';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from 'next-themes';
 
 const queryClient = new QueryClient();
 
 export default function App() {
     return (
         <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/install" element={<Installer />} />
-                    
-                    {/* Customer Portal Routes (Protected) */}
-                    <Route element={<ProtectedRoute allowedRoles={['customer']} />}>
-                        <Route path="/customer/dashboard" element={<CustomerDashboard />} />
-                        <Route path="/customer/recharge" element={<CustomerRecharge />} />
-                        <Route path="/customer/tickets" element={<CustomerTickets />} />
-                        <Route path="/pages/:slug" element={<CustomPage />} />
-                    </Route>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                <AuthProvider>
+                    <BrowserRouter>
+                        <Routes>
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/install" element={<Installer />} />
+                            
+                            {/* Customer Portal Routes (Protected) */}
+                            <Route element={<ProtectedRoute allowedRoles={['customer']} />}>
+                                <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+                                <Route path="/customer/recharge" element={<CustomerRecharge />} />
+                                <Route path="/customer/tickets" element={<CustomerTickets />} />
+                                <Route path="/pages/:slug" element={<CustomPage />} />
+                            </Route>
 
-                    {/* All authenticated staff */}
-                    <Route element={<ProtectedRoute />}>
-                        <Route path="/dashboard" element={<Dashboard />} />
-                        <Route path="/messages" element={<MessagesIndex />} />
-                        <Route path="/messages/create" element={<MessagesCreate />} />
-                        <Route path="/messages/:id" element={<MessagesShow />} />
-                    </Route>
+                            {/* All authenticated staff */}
+                            <Route element={<ProtectedRoute />}>
+                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/messages" element={<MessagesIndex />} />
+                                <Route path="/messages/create" element={<MessagesCreate />} />
+                                <Route path="/messages/:id" element={<MessagesShow />} />
+                            </Route>
 
-                    {/* Admin, Sales & POS */}
-                    <Route element={<ProtectedRoute allowedRoles={['admin', 'sales', 'pos']} />}>
-                        <Route path="/customers" element={<CustomersIndex />} />
-                        <Route path="/customers/search" element={<CustomersSearch />} />
-                        <Route path="/customers/pppoe" element={<CustomersPPPoE />} />
-                        <Route path="/customers/billing" element={<CustomersBilling />} />
-                        <Route path="/customers/create" element={<CustomersCreate />} />
-                        <Route path="/customers/:id" element={<CustomersShow />} />
-                        <Route path="/customers/:id/edit" element={<CustomersEdit />} />
-                        <Route path="/customers/:id/recharge" element={<RechargeCreate />} />
-                        <Route path="/vouchers" element={<VouchersIndex />} />
-                        <Route path="/vouchers/generate" element={<VouchersGenerate />} />
-                        <Route path="/vouchers/allocate" element={<VoucherAllocation />} />
-                        <Route path="/wallet" element={<WalletIndex />} />
-                    </Route>
+                            {/* Admin, Sales & POS */}
+                            <Route element={<ProtectedRoute allowedRoles={['admin', 'sales', 'pos']} />}>
+                                <Route path="/customers" element={<CustomersIndex />} />
+                                <Route path="/customers/pppoe" element={<CustomersPPPoE />} />
+                                <Route path="/customers/billing" element={<CustomersBilling />} />
+                                <Route path="/customers/create" element={<CustomersCreate />} />
+                                <Route path="/customers/:id" element={<CustomersShow />} />
+                                <Route path="/customers/:id/edit" element={<CustomersEdit />} />
+                                <Route path="/customers/:id/recharge" element={<RechargeCreate />} />
+                                <Route path="/vouchers" element={<VouchersIndex />} />
+                                <Route path="/vouchers/generate" element={<VouchersGenerate />} />
+                                <Route path="/vouchers/allocate" element={<VoucherAllocation />} />
+                                <Route path="/wallet" element={<WalletIndex />} />
+                            </Route>
 
-                    {/* Sales & Admins Only (including tickets list & details) */}
-                    <Route element={<ProtectedRoute allowedRoles={['admin', 'sales']} />}>
-                        <Route path="/reports" element={<ReportsIndex />} />
-                        <Route path="/reports/billings" element={<BillingsDashboard />} />
-                        <Route path="/tickets" element={<TicketsIndex />} />
-                        <Route path="/tickets/:id" element={<TicketDetails />} />
-                    </Route>
+                            {/* Sales & Admins Only (including tickets list & details) */}
+                            <Route element={<ProtectedRoute allowedRoles={['admin', 'sales']} />}>
+                                <Route path="/reports" element={<ReportsIndex />} />
+                                <Route path="/reports/billings" element={< BillingsDashboard />} />
+                                <Route path="/tickets" element={<TicketsIndex />} />
+                                <Route path="/tickets/:id" element={<TicketDetails />} />
+                            </Route>
 
-                    {/* Admins only */}
-                    <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-                        <Route path="/plans" element={<PlansIndex type="hotspot" />} />
-                        <Route path="/plans/pppoe" element={<PlansIndex type="pppoe" />} />
-                        <Route path="/plans/create" element={<PlanForm />} />
-                        <Route path="/plans/:id/edit" element={<PlanForm />} />
-                        <Route path="/bandwidth" element={<BandwidthIndex />} />
-                        <Route path="/bandwidth/create" element={<BandwidthForm />} />
-                        <Route path="/bandwidth/:id/edit" element={<BandwidthForm />} />
-                        <Route path="/routers" element={<RouterIndex />} />
-                        <Route path="/routers/create" element={<RouterForm />} />
-                        <Route path="/routers/:id/edit" element={<RouterForm />} />
-                        <Route path="/nas/logs" element={<NASLogs />} />
-                        <Route path="/ip-bindings" element={<IpBindIndex />} />
-                        <Route path="/ip-bindings/create" element={<IpBindForm />} />
-                        <Route path="/ip-bindings/:id/edit" element={<IpBindForm />} />
-                        <Route path="/pools" element={<PoolsIndex />} />
-                        <Route path="/pools/create" element={<PoolForm />} />
-                        <Route path="/pools/:id/edit" element={<PoolForm />} />
-                        <Route path="/monitor/sessions" element={<MonitorSessions />} />
-                        <Route path="/monitor/logs" element={<MonitorLogs />} />
-                        
-                        {/* Administration */}
-                        <Route path="/administration/users" element={<UsersIndex />} />
-                        <Route path="/administration/users/create" element={<UserForm />} />
-                        <Route path="/administration/users/:id/edit" element={<UserForm />} />
-                        <Route path="/administration/settings" element={<Settings />} />
-                        <Route path="/administration/backup" element={<BackupRestore />} />
-                        
-                        {/* CMS Settings */}
-                        <Route path="/administration/cms/categories" element={<CMSCategories />} />
-                        <Route path="/administration/cms/states" element={<CMSStates />} />
-                    </Route>
+                            {/* Admins only */}
+                            <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+                                <Route path="/plans" element={<PlansIndex type="hotspot" />} />
+                                <Route path="/plans/pppoe" element={<PlansIndex type="pppoe" />} />
+                                <Route path="/plans/create" element={<PlanForm />} />
+                                <Route path="/plans/:id/edit" element={<PlanForm />} />
+                                <Route path="/bandwidth" element={<BandwidthIndex />} />
+                                <Route path="/bandwidth/create" element={<BandwidthForm />} />
+                                <Route path="/bandwidth/:id/edit" element={<BandwidthForm />} />
+                                <Route path="/routers" element={<RouterIndex />} />
+                                <Route path="/routers/create" element={<RouterForm />} />
+                                <Route path="/routers/:id/edit" element={<RouterForm />} />
+                                <Route path="/nas/logs" element={<NASLogs />} />
+                                <Route path="/ip-bindings" element={<IpBindIndex />} />
+                                <Route path="/ip-bindings/create" element={<IpBindForm />} />
+                                <Route path="/ip-bindings/:id/edit" element={<IpBindForm />} />
+                                <Route path="/pools" element={<PoolsIndex />} />
+                                <Route path="/pools/create" element={<PoolForm />} />
+                                <Route path="/pools/:id/edit" element={<PoolForm />} />
+                                <Route path="/monitor/sessions" element={<MonitorSessions />} />
+                                <Route path="/monitor/logs" element={<MonitorLogs />} />
+                                
+                                {/* Administration */}
+                                <Route path="/administration/users" element={<UsersIndex />} />
+                                <Route path="/administration/users/create" element={<UserForm />} />
+                                <Route path="/administration/users/:id/edit" element={<UserForm />} />
+                                <Route path="/administration/settings" element={<Settings />} />
+                                <Route path="/administration/backup" element={<BackupRestore />} />
+                                
+                                {/* CMS Settings */}
+                                <Route path="/administration/cms/categories" element={<CMSCategories />} />
+                                <Route path="/administration/cms/states" element={<CMSStates />} />
+                            </Route>
 
-                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
-                </Routes>
-            </BrowserRouter>
-        </AuthProvider>
-      </QueryClientProvider>
+                            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                        </Routes>
+                    </BrowserRouter>
+                </AuthProvider>
+            </ThemeProvider>
+        </QueryClientProvider>
     );
 }

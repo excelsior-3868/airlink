@@ -52,6 +52,8 @@ class VoucherApiController extends Controller
             'generated_for' => $data['generated_for'] ?? null,
         ]);
 
+        $this->bustCache($request, $data['generated_for'] ?? null);
+
         return response()->json([
             'message' => "{$created} voucher(s) generated."
         ], 201);
@@ -60,29 +62,32 @@ class VoucherApiController extends Controller
     public function allocations(Request $request): JsonResponse
     {
         $user = $request->user();
+        $cacheKey = "vouchers_allocations_" . ($user->isAdmin() ? 'admin' : "user_{$user->username}");
 
-        $allocations = \DB::table('tbl_voucher AS t')
-            ->leftJoin('radacct AS r', function ($join) {
-                if (\DB::getDriverName() === 'sqlite') {
-                    $join->on('t.code', '=', 'r.username');
-                } else {
-                    $join->on(\DB::raw('t.code COLLATE utf8mb4_unicode_ci'), '=', \DB::raw('r.username COLLATE utf8mb4_unicode_ci'));
-                }
-            })
-            ->select(
-                't.allocation',
-                \DB::raw('MIN(t.id) AS first_id'),
-                \DB::raw('MAX(t.id) AS last_id'),
-                \DB::raw('COUNT(distinct t.code) AS count'),
-                \DB::raw('COUNT(distinct r.username) AS matching_users')
-            )
-            ->where('t.allocation', '<>', '0')
-            ->whereNotNull('t.allocation')
-            ->where('t.allocation', '<>', '')
-            ->when(!$user->isAdmin(), fn ($q) => $q->where('t.generated_for', $user->username))
-            ->groupBy('t.allocation')
-            ->orderByDesc('matching_users')
-            ->get();
+        $allocations = \Illuminate\Support\Facades\Cache::remember($cacheKey, 30, function () use ($user) {
+            return \DB::table('tbl_voucher AS t')
+                ->leftJoin('radacct AS r', function ($join) {
+                    if (\DB::getDriverName() === 'sqlite') {
+                        $join->on('t.code', '=', 'r.username');
+                    } else {
+                        $join->on(\DB::raw('t.code COLLATE utf8mb4_unicode_ci'), '=', \DB::raw('r.username COLLATE utf8mb4_unicode_ci'));
+                    }
+                })
+                ->select(
+                    't.allocation',
+                    \DB::raw('MIN(t.id) AS first_id'),
+                    \DB::raw('MAX(t.id) AS last_id'),
+                    \DB::raw('COUNT(distinct t.code) AS count'),
+                    \DB::raw('COUNT(distinct r.username) AS matching_users')
+                )
+                ->where('t.allocation', '<>', '0')
+                ->whereNotNull('t.allocation')
+                ->where('t.allocation', '<>', '')
+                ->when(!$user->isAdmin(), fn ($q) => $q->where('t.generated_for', $user->username))
+                ->groupBy('t.allocation')
+                ->orderByDesc('matching_users')
+                ->get();
+        });
 
         return response()->json($allocations);
     }
@@ -125,6 +130,8 @@ class VoucherApiController extends Controller
         Voucher::whereBetween('id', [$data['id_start'], $data['id_end']])
             ->update(['allocation' => $data['vou_collector']]);
 
+        $this->bustCache($request, $data['vou_collector']);
+
         return response()->json([
             'message' => 'Vouchers allocated successfully.'
         ]);
@@ -133,10 +140,30 @@ class VoucherApiController extends Controller
     public function destroy(Request $request, Voucher $voucher): JsonResponse
     {
         abort_unless($request->user()->hasRole(UserRole::Admin), 403);
+        
+        $generatedFor = $voucher->generated_for;
         $voucher->delete();
+
+        $this->bustCache($request, $generatedFor);
 
         return response()->json([
             'message' => 'Voucher deleted.'
         ]);
+    }
+
+    private function bustCache(Request $request, ?string $targetUser = null): void
+    {
+        $user = $request->user();
+        \Illuminate\Support\Facades\Cache::forget('dashboard_staff_stats');
+        \Illuminate\Support\Facades\Cache::forget('vouchers_allocations_admin');
+        
+        if ($user) {
+            \Illuminate\Support\Facades\Cache::forget("vouchers_allocations_user_{$user->username}");
+            \Illuminate\Support\Facades\Cache::forget("dashboard_pos_stats_{$user->username}");
+        }
+        if ($targetUser) {
+            \Illuminate\Support\Facades\Cache::forget("vouchers_allocations_user_{$targetUser}");
+            \Illuminate\Support\Facades\Cache::forget("dashboard_pos_stats_{$targetUser}");
+        }
     }
 }
