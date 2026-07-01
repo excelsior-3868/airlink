@@ -33,7 +33,7 @@ export default function MessagesIndex() {
                     box,
                 },
             });
-            return res.data;
+            return res.data.messages;
         },
         placeholderData: keepPreviousData,
     });

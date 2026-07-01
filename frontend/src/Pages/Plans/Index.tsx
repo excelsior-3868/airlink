@@ -56,7 +56,7 @@ export default function PlansIndex({ type }: PlansIndexProps) {
     };
 
     return (
-        <AppLayout title={type === 'pppoe' ? 'PPPoE Plans' : 'Service Plans'}>
+        <AppLayout title={type === 'pppoe' ? 'PPPoE Plans' : 'Hotspot Plans'}>
             <CrudIndex<Plan>
                 rows={data}
                 columns={[

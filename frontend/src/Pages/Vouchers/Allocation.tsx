@@ -179,29 +179,39 @@ export default function VoucherAllocation() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {allocations.length === 0 && (
-                                            <TableRow>
-                                                <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
-                                                    No vouchers allocated yet.
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                        {allocations.map((alloc, i) => (
-                                            <TableRow key={i}>
-                                                <TableCell className="font-semibold text-[#13366e]">
-                                                    {alloc.allocation}
-                                                </TableCell>
-                                                <TableCell className="text-right font-medium">
-                                                    {alloc.count}
-                                                </TableCell>
-                                                <TableCell className="text-center text-sm text-muted-foreground">
-                                                    {alloc.first_id} — {alloc.last_id}
-                                                </TableCell>
-                                                <TableCell className="text-right font-semibold text-emerald-600">
-                                                    {alloc.matching_users}
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                        {(() => {
+                                            const allocationsArray = Array.isArray(allocations)
+                                                ? allocations
+                                                : (allocations && typeof allocations === 'object' ? Object.values(allocations) : []);
+                                            
+                                            return (
+                                                <>
+                                                    {allocationsArray.length === 0 && (
+                                                        <TableRow>
+                                                            <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                                                                No vouchers allocated yet.
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    )}
+                                                    {allocationsArray.map((alloc: any, i: number) => (
+                                                        <TableRow key={i}>
+                                                            <TableCell className="font-semibold text-[#13366e]">
+                                                                {alloc.allocation}
+                                                            </TableCell>
+                                                            <TableCell className="text-right font-medium">
+                                                                {alloc.count}
+                                                            </TableCell>
+                                                            <TableCell className="text-center text-sm text-muted-foreground">
+                                                                {alloc.first_id} — {alloc.last_id}
+                                                            </TableCell>
+                                                            <TableCell className="text-right font-semibold text-emerald-600">
+                                                                {alloc.matching_users}
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </>
+                                            );
+                                        })()}
                                     </TableBody>
                                 </Table>
                             )}

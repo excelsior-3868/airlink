@@ -69,7 +69,7 @@ class DashboardApiController extends Controller
                 SELECT 
                     t.generated_for,
                     v.total_generated_for,
-                    COUNT(DISTINCT CASE WHEN r.username = t.code THEN r.username ELSE NULL END) AS matching_codes,
+                    COUNT(DISTINCT CASE WHEN r.username {$collate} = t.code {$collate} THEN r.username ELSE NULL END) AS matching_codes,
                     SUM(CASE WHEN t.expired = 1 THEN 1 ELSE 0 END) AS expired_codes 
                 FROM tbl_voucher t 
                 LEFT JOIN radacct r ON t.code {$collate} = r.username {$collate}
